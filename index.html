@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מונה התקדמות קורס</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+        h1 {
+            margin-top: 0;
+            font-size: 24px;
+            color: #2c3e50;
+        }
+        .percentage {
+            font-size: 48px;
+            font-weight: bold;
+            color: #27ae60;
+            margin: 20px 0;
+            font-variant-numeric: tabular-nums;
+        }
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 25px;
+            overflow: hidden;
+            height: 30px;
+            margin-bottom: 30px;
+        }
+        .progress-bar {
+            height: 100%;
+            background-color: #27ae60;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .mode-label {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>התקדמות הקורס</h1>
+        <div class="percentage" id="percentageDisplay">0.0000%</div>
+        
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <button id="toggleModeBtn">הצג ברוטו (כולל סופ"שים)</button>
+        <div class="mode-label" id="modeLabel">מצב נוכחי: נטו (ללא 8-9.5 ו-15-16.5)</div>
+    </div>
+
+    <script>
+        // תאריכי התחלה וסיום
+        const startDate = new Date('2026-04-24T00:00:00').getTime();
+        const endDate = new Date('2026-05-21T23:59:59').getTime();
+
+        // הגדרת זמני ההחרגה (סופי שבוע)
+        const exclusions = [
+            { start: new Date('2026-05-08T00:00:00').getTime(), end: new Date('2026-05-09T23:59:59').getTime() },
+            { start: new Date('2026-05-15T00:00:00').getTime(), end: new Date('2026-05-16T23:59:59').getTime() }
+        ];
+
+        let isNetMode = true;
+
+        function updateProgress() {
+            const now = new Date().getTime();
+            
+            let totalDuration = endDate - startDate;
+            let elapsed = now - startDate;
+
+            // טיפול במקרי קצה (לפני ההתחלה או אחרי הסיום)
+            if (elapsed < 0) elapsed = 0;
+            if (elapsed > totalDuration) elapsed = totalDuration;
+
+            if (isNetMode) {
+                let excludedTotal = 0;
+                let excludedElapsed = 0;
+
+                exclusions.forEach(ex => {
+                    // מוסיפים את זמן ההחרגה לסך הזמן שיורד
+                    excludedTotal += (ex.end - ex.start);
+
+                    // בודקים כמה מזמן ההחרגה כבר עבר בפועל
+                    if (now > ex.start) {
+                        if (now > ex.end) {
+                            excludedElapsed += (ex.end - ex.start);
+                        } else {
+                            excludedElapsed += (now - ex.start);
+                        }
+                    }
+                });
+
+                totalDuration -= excludedTotal;
+                elapsed -= excludedElapsed;
+            }
+
+            // חישוב האחוזים
+            let percentage = (elapsed / totalDuration) * 100;
+            // הגבלת האחוזים בין 0 ל-100
+            percentage = Math.max(0, Math.min(100, percentage));
+
+            // עדכון ה-UI
+            document.getElementById('percentageDisplay').innerText = percentage.toFixed(4) + '%';
+            document.getElementById('progressBar').style.width = percentage + '%';
+        }
+
+        // מאזין ללחיצה על הכפתור
+        document.getElementById('toggleModeBtn').addEventListener('click', () => {
+            isNetMode = !isNetMode;
+            const btn = document.getElementById('toggleModeBtn');
+            const label = document.getElementById('modeLabel');
+            
+            if (isNetMode) {
+                btn.innerText = 'הצג ברוטו (כולל סופ"שים)';
+                label.innerText = 'מצב נוכחי: נטו (ללא 8-9.5 ו-15-16.5)';
+            } else {
+                btn.innerText = 'הצג נטו (ללא סופ"שים)';
+                label.innerText = 'מצב נוכחי: ברוטו (כולל הכל)';
+            }
+            updateProgress();
+        });
+
+        // עדכון כל 50 מילי-שניות לקבלת אנימציה חלקה של המספרים
+        setInterval(updateProgress, 50);
+        updateProgress(); // הפעלה ראשונית מידית
+    </script>
+</body>
+</html>
