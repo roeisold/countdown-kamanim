@@ -67,6 +67,21 @@
             margin-top: 15px;
             font-size: 14px;
             color: #7f8c8d;
+            margin-bottom: 25px;
+        }
+        .did-you-know {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8f4f8;
+            border-right: 4px solid #3498db;
+            border-radius: 5px;
+            font-size: 15px;
+            color: #2c3e50;
+            text-align: right;
+            min-height: 45px;
+            display: flex;
+            align-items: center;
+            transition: opacity 0.5s ease;
         }
     </style>
 </head>
@@ -82,12 +97,15 @@
 
         <button id="toggleModeBtn">הצג ברוטו (כולל סופ"שים)</button>
         <div class="mode-label" id="modeLabel">מצב נוכחי: נטו (ללא 8-9.5 ו-15-16.5)</div>
+
+        <div class="did-you-know" id="didYouKnow"></div>
     </div>
 
     <script>
         // תאריכי התחלה וסיום
         const startDate = new Date('2026-04-23T09:00:00').getTime();
         const endDate = new Date('2026-05-21T09:00:00').getTime();
+        const totalCourseMs = endDate - startDate; // סך הזמן הכולל במילישניות
 
         // הגדרת זמני ההחרגה (סופי שבוע)
         const exclusions = [
@@ -112,10 +130,7 @@
                 let excludedElapsed = 0;
 
                 exclusions.forEach(ex => {
-                    // מוסיפים את זמן ההחרגה לסך הזמן שיורד
                     excludedTotal += (ex.end - ex.start);
-
-                    // בודקים כמה מזמן ההחרגה כבר עבר בפועל
                     if (now > ex.start) {
                         if (now > ex.end) {
                             excludedElapsed += (ex.end - ex.start);
@@ -129,17 +144,13 @@
                 elapsed -= excludedElapsed;
             }
 
-            // חישוב האחוזים
             let percentage = (elapsed / totalDuration) * 100;
-            // הגבלת האחוזים בין 0 ל-100
             percentage = Math.max(0, Math.min(100, percentage));
 
-            // עדכון ה-UI
             document.getElementById('percentageDisplay').innerText = percentage.toFixed(4) + '%';
             document.getElementById('progressBar').style.width = percentage + '%';
         }
 
-        // מאזין ללחיצה על הכפתור
         document.getElementById('toggleModeBtn').addEventListener('click', () => {
             isNetMode = !isNetMode;
             const btn = document.getElementById('toggleModeBtn');
@@ -155,9 +166,42 @@
             updateProgress();
         });
 
-        // עדכון כל 50 מילי-שניות לקבלת אנימציה חלקה של המספרים
+        // חישוב אחוז מהזמן הכולל לפי כמות דקות
+        function calcPercentFromTotal(minutes) {
+            const ms = minutes * 60 * 1000;
+            return ((ms / totalCourseMs) * 100).toFixed(4) + '%';
+        }
+
+        function getRandomFact() {
+            const facts = [
+                `הידעת? הנחת תפילין בבוקר (5 דקות) לוקחת כ-${calcPercentFromTotal(5)} מהזמן הכולל של הקורס.`,
+                `הידעת? הורדת התנסות לוקחת לך ${calcPercentFromTotal(20)} מכל ההתנסות.`,
+                `הידעת? שינה של 7 שעות הלילה לוקחת ${calcPercentFromTotal(7 * 60)} מכל הקורס.`,
+                `הידעת? ישיבה של 15 דקות בשירותים שורפת ${calcPercentFromTotal(15)} מהקורס.`,
+                `הידעת? צחצוח שיניים (בערך 3 דקות) לוקח כ-${calcPercentFromTotal(3)} מזמן הקורס.`,
+                `הידעת? לקח לי 1.5% מהקורס להכין את האתר הזה!`,
+                `הידעת? ריצת 3 ק"מ ב-15:15 דקות לוקחת ${calcPercentFromTotal(15.25)} מזמן הקורס.`,
+                `הידעת? חליטת 36 גרם אספרסו ב-30 שניות שורפת בדיוק ${calcPercentFromTotal(0.5)} מהקורס.`
+            ];
+            return facts[Math.floor(Math.random() * facts.length)];
+        }
+
+        const didYouKnowEl = document.getElementById('didYouKnow');
+        
+        function changeFact() {
+            didYouKnowEl.style.opacity = 0; // העלמה חלקה
+            setTimeout(() => {
+                didYouKnowEl.innerText = getRandomFact();
+                didYouKnowEl.style.opacity = 1; // חזרה חלקה
+            }, 500);
+        }
+
+        // הפעלות ראשוניות וטיימרים
         setInterval(updateProgress, 50);
-        updateProgress(); // הפעלה ראשונית מידית
+        updateProgress();
+        
+        changeFact(); // עובדה ראשונה מיד בטעינה
+        setInterval(changeFact, 12000); // החלפת עובדה כל 12 שניות
     </script>
 </body>
 </html>
