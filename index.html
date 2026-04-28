@@ -195,7 +195,6 @@
             const milestoneMsg = document.getElementById('milestoneMsg');
             const container = document.getElementById('mainContainer');
             
-            // חלון החגיגה: רק בין 25% ל-28%
             if (percentage >= 25 && percentage < 28) {
                 pBar.style.backgroundColor = '#f1c40f'; 
                 milestoneMsg.style.display = 'block';
@@ -208,12 +207,10 @@
                     localStorage.setItem('celebrated25Percent', 'true'); 
                 }
             } else {
-                // חזרה לשגרה (מתחת ל-25 או מעל 28)
                 pBar.style.backgroundColor = '#27ae60'; 
                 milestoneMsg.style.display = 'none';
                 container.classList.remove('celebration-glow');
                 
-                // איפוס הזיכרון רק אם חזרנו אחורה מתחת ל-25 (למשל במקרה של שינוי תאריכים)
                 if (percentage < 25) {
                     localStorage.removeItem('celebrated25Percent'); 
                 }
@@ -235,6 +232,7 @@
             updateProgress();
         });
 
+        // חישוב אחוז מהזמן הכולל לפי כמות דקות
         function calcPercentFromTotal(minutes) {
             const ms = minutes * 60 * 1000;
             return ((ms / totalCourseMs) * 100).toFixed(4) + '%';
@@ -244,15 +242,21 @@
             const facts = [
                 `הידעת? הליכה לאולם הנגב (3 דקות) לוקחת כ-${calcPercentFromTotal(3)} מהקורס.`,
                 `הידעת? הנחת תפילין בבוקר (5 דקות) לוקחת כ-${calcPercentFromTotal(5)} מהזמן הכולל של הקורס.`,
-                `הידעת? המתנה בהקשב מחוץ לכיתה (10 דקות) שורפת ${calcPercentFromTotal(10)} מהקורס.`,
-                `הידעת? חיפוש מי חסר בשלשות (7 דקות) מבזבז ${calcPercentFromTotal(7)} מזמן הקורס.`,
                 `הידעת? הורדת התנסות לוקחת לך ${calcPercentFromTotal(20)} מזמן הקורס.`,
                 `הידעת? עמידה בתור לחדר האוכל (15 דקות) לוקחת ${calcPercentFromTotal(15)} מהקורס.`,
                 `הידעת? גילוח וצחצוח בוקר (4 דקות) לוקחים כ-${calcPercentFromTotal(4)} מזמן הקורס.`,
                 `הידעת? שינה של 7 שעות הלילה לוקחת ${calcPercentFromTotal(7 * 60)} מכל הקורס.`,
                 `הידעת? ישיבה של 15 דקות בשירותים שורפת ${calcPercentFromTotal(15)} מהקורס.`,
                 `הידעת? ריצת 3 ק"מ ב-15:30 דקות לוקחת ${calcPercentFromTotal(15.5)} מזמן הקורס.`,
-                `הידעת? לקח לי 1.5% מהקורס להכין את האתר הזה!`
+                `הידעת? לקח לי 1.5% מהקורס להכין את האתר הזה!`,
+                `הידעת? כתיבת 3 יעדים ביומן (10 דקות) שווה ערך ל-${calcPercentFromTotal(10)} מהקורס.`,
+                `הידעת? גלילה ממוצעת ב-Reels (20 דקות) שורפת ${calcPercentFromTotal(20)} מהקורס.`,
+                `הידעת? בזמן שקראת את הידיעה הזאת (10 שניות), עבר בדיוק ${calcPercentFromTotal(10 / 60)} מהקורס.`,
+                `הידעת? יום ג' אחד שווה ל-${calcPercentFromTotal(24 * 60)} מהזמן הכולל של הקורס.`,
+                `הידעת? גזירת זמנים של 10 דקות לוקחת ${calcPercentFromTotal(10)} מזמן הקורס.`,
+                `הידעת? הליכה מהתעלה לש"ג (10 דקות) לוקחת ${calcPercentFromTotal(10)} מהקורס.`,
+                `הידעת? תרגיל מרחב מוגן (15 דקות) לוקח ${calcPercentFromTotal(15)} מהקורס.`,
+                `הידעת? זמן תור בחלבייה בבוקר (10 דקות) שורף ${calcPercentFromTotal(10)} מהקורס.`
             ];
             return facts[Math.floor(Math.random() * facts.length)];
         }
