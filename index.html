@@ -139,18 +139,11 @@
             var duration = 3 * 1000;
             var animationEnd = Date.now() + duration;
             var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
-
-            function randomInRange(min, max) {
-              return Math.random() * (max - min) + min;
-            }
+            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
 
             var interval = setInterval(function() {
               var timeLeft = animationEnd - Date.now();
-
-              if (timeLeft <= 0) {
-                return clearInterval(interval);
-              }
-
+              if (timeLeft <= 0) return clearInterval(interval);
               var particleCount = 50 * (timeLeft / duration);
               confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } });
               confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
@@ -159,60 +152,57 @@
 
         function updateProgress() {
             const now = new Date().getTime();
-            
             let totalDuration = endDate - startDate;
             let elapsed = now - startDate;
 
             if (elapsed < 0) elapsed = 0;
             if (elapsed > totalDuration) elapsed = totalDuration;
 
-            if (isNetMode) {
-                let excludedTotal = 0;
-                let excludedElapsed = 0;
+            // חישוב נטו
+            let excludedTotal = 0;
+            let excludedElapsed = 0;
+            exclusions.forEach(ex => {
+                excludedTotal += (ex.end - ex.start);
+                if (now > ex.start) {
+                    if (now > ex.end) excludedElapsed += (ex.end - ex.start);
+                    else excludedElapsed += (now - ex.start);
+                }
+            });
 
-                exclusions.forEach(ex => {
-                    excludedTotal += (ex.end - ex.start);
-                    if (now > ex.start) {
-                        if (now > ex.end) {
-                            excludedElapsed += (ex.end - ex.start);
-                        } else {
-                            excludedElapsed += (now - ex.start);
-                        }
-                    }
-                });
+            const netTotal = totalDuration - excludedTotal;
+            const netElapsed = elapsed - excludedElapsed;
+            const netPercentage = Math.max(0, Math.min(100, (netElapsed / netTotal) * 100));
+            const grossPercentage = Math.max(0, Math.min(100, (elapsed / totalDuration) * 100));
 
-                totalDuration -= excludedTotal;
-                elapsed -= excludedElapsed;
-            }
+            // מה מוצג כרגע?
+            const displayPercentage = isNetMode ? netPercentage : grossPercentage;
 
-            let percentage = (elapsed / totalDuration) * 100;
-            percentage = Math.max(0, Math.min(100, percentage));
-
-            document.getElementById('percentageDisplay').innerText = percentage.toFixed(4) + '%';
+            document.getElementById('percentageDisplay').innerText = displayPercentage.toFixed(4) + '%';
             const pBar = document.getElementById('progressBar');
-            pBar.style.width = percentage + '%';
+            pBar.style.width = displayPercentage + '%';
 
+            // לוגיקת החגיגה - לפי מה שמוצג על המסך
             const milestoneMsg = document.getElementById('milestoneMsg');
             const container = document.getElementById('mainContainer');
             
-            if (percentage >= 25 && percentage < 28) {
+            if (displayPercentage >= 25 && displayPercentage < 28) {
                 pBar.style.backgroundColor = '#f1c40f'; 
                 milestoneMsg.style.display = 'block';
                 container.classList.add('celebration-glow');
 
-                const hasCelebrated = localStorage.getItem('celebrated25Percent');
-                
-                if (!hasCelebrated) {
+                // מפתח זיכרון נפרד לכל מצב
+                const storageKey = isNetMode ? 'celebrated25Net' : 'celebrated25Gross';
+                if (!localStorage.getItem(storageKey)) {
                     shootConfetti(); 
-                    localStorage.setItem('celebrated25Percent', 'true'); 
+                    localStorage.setItem(storageKey, 'true'); 
                 }
             } else {
                 pBar.style.backgroundColor = '#27ae60'; 
                 milestoneMsg.style.display = 'none';
                 container.classList.remove('celebration-glow');
                 
-                if (percentage < 25) {
-                    localStorage.removeItem('celebrated25Percent'); 
+                if (displayPercentage < 25) {
+                    localStorage.removeItem(isNetMode ? 'celebrated25Net' : 'celebrated25Gross'); 
                 }
             }
         }
@@ -221,7 +211,6 @@
             isNetMode = !isNetMode;
             const btn = document.getElementById('toggleModeBtn');
             const label = document.getElementById('modeLabel');
-            
             if (isNetMode) {
                 btn.innerText = 'הצג ברוטו (כולל סופ"שים)';
                 label.innerText = 'מצב נוכחי: נטו (ללא 8-9.5 ו-15-16.5)';
@@ -232,7 +221,6 @@
             updateProgress();
         });
 
-        // חישוב אחוז מהזמן הכולל לפי כמות דקות
         function calcPercentFromTotal(minutes) {
             const ms = minutes * 60 * 1000;
             return ((ms / totalCourseMs) * 100).toFixed(4) + '%';
@@ -241,19 +229,18 @@
         function getRandomFact() {
             const facts = [
                 `הידעת? הליכה לאולם הנגב (3 דקות) לוקחת כ-${calcPercentFromTotal(3)} מהקורס.`,
-                `הידעת? הנחת תפילין בבוקר (5 דקות) לוקחת כ-${calcPercentFromTotal(5)} מהזמן הכולל של הקורס.`,
+                `הידעת? הנחת תפילין בבוקר (5 דקות) לוקחת כ-${calcPercentFromTotal(5)} מהקורס.`,
                 `הידעת? הורדת התנסות לוקחת לך ${calcPercentFromTotal(20)} מזמן הקורס.`,
                 `הידעת? עמידה בתור לחדר האוכל (15 דקות) לוקחת ${calcPercentFromTotal(15)} מהקורס.`,
-                `הידעת? גילוח וצחצוח בוקר (4 דקות) לוקחים כ-${calcPercentFromTotal(4)} מזמן הקורס.`,
+                `הידעת? גילוח וצחצוח בוקר (4 דקות) לוקחים כ-${calcPercentFromTotal(4)} מהקורס.`,
                 `הידעת? שינה של 7 שעות הלילה לוקחת ${calcPercentFromTotal(7 * 60)} מכל הקורס.`,
                 `הידעת? ישיבה של 15 דקות בשירותים שורפת ${calcPercentFromTotal(15)} מהקורס.`,
                 `הידעת? ריצת 3 ק"מ ב-15:30 דקות לוקחת ${calcPercentFromTotal(15.5)} מזמן הקורס.`,
-                `הידעת? לקח לי 1.5% מהקורס להכין את האתר הזה!`,
                 `הידעת? כתיבת 3 יעדים ביומן (10 דקות) שווה ערך ל-${calcPercentFromTotal(10)} מהקורס.`,
                 `הידעת? גלילה ממוצעת ב-Reels (20 דקות) שורפת ${calcPercentFromTotal(20)} מהקורס.`,
                 `הידעת? בזמן שקראת את הידיעה הזאת (10 שניות), עבר בדיוק ${calcPercentFromTotal(10 / 60)} מהקורס.`,
-                `הידעת? יום ג' אחד שווה ל-${calcPercentFromTotal(24 * 60)} מהזמן הכולל של הקורס.`,
-                `הידעת? גזירת זמנים של 10 דקות לוקחת ${calcPercentFromTotal(10)} מזמן הקורס.`,
+                `הידעת? יום ג' רפואי (24 שעות בבית) שווה ל-${calcPercentFromTotal(24 * 60)} מהקורס.`,
+                `הידעת? גזירת זמנים של 10 דקות לוקחת ${calcPercentFromTotal(10)} מהקורס.`,
                 `הידעת? הליכה מהתעלה לש"ג (10 דקות) לוקחת ${calcPercentFromTotal(10)} מהקורס.`,
                 `הידעת? תרגיל מרחב מוגן (15 דקות) לוקח ${calcPercentFromTotal(15)} מהקורס.`,
                 `הידעת? זמן תור בחלבייה בבוקר (10 דקות) שורף ${calcPercentFromTotal(10)} מהקורס.`
@@ -262,7 +249,6 @@
         }
 
         const didYouKnowEl = document.getElementById('didYouKnow');
-        
         function changeFact() {
             didYouKnowEl.style.opacity = 0; 
             setTimeout(() => {
@@ -273,7 +259,6 @@
 
         setInterval(updateProgress, 50);
         updateProgress();
-        
         changeFact(); 
         setInterval(changeFact, 12000); 
     </script>
