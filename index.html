@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>מונה התקדמות קורס</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -14,6 +15,7 @@
             height: 100vh;
             margin: 0;
             color: #333;
+            overflow: hidden; 
         }
         .container {
             background: white;
@@ -23,17 +25,36 @@
             text-align: center;
             max-width: 500px;
             width: 90%;
+            position: relative;
+            transition: box-shadow 0.5s ease, border 0.5s ease;
+        }
+        .celebration-glow {
+            box-shadow: 0 0 30px rgba(241, 196, 15, 0.5);
+            border: 2px solid #f1c40f;
         }
         h1 {
             margin-top: 0;
             font-size: 24px;
             color: #2c3e50;
         }
+        .milestone-msg {
+            font-size: 18px;
+            font-weight: bold;
+            color: #d35400;
+            margin-bottom: 10px;
+            display: none; 
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-5px);}
+            60% {transform: translateY(-3px);}
+        }
         .percentage {
             font-size: 48px;
             font-weight: bold;
             color: #27ae60;
-            margin: 20px 0;
+            margin: 10px 0 20px 0;
             font-variant-numeric: tabular-nums;
         }
         .progress-bar-container {
@@ -48,7 +69,7 @@
             height: 100%;
             background-color: #27ae60;
             width: 0%;
-            transition: width 0.1s linear;
+            transition: width 0.1s linear, background-color 0.5s ease;
         }
         button {
             background-color: #3498db;
@@ -87,8 +108,9 @@
 </head>
 <body>
 
-    <div class="container">
+    <div class="container" id="mainContainer">
         <h1>התקדמות הקורס</h1>
+        <div class="milestone-msg" id="milestoneMsg">🎉 25% מהדרך מאחורינו! 🎉</div>
         <div class="percentage" id="percentageDisplay">0.0000%</div>
         
         <div class="progress-bar-container">
@@ -102,12 +124,10 @@
     </div>
 
     <script>
-        // תאריכי התחלה וסיום
         const startDate = new Date('2026-04-23T09:00:00').getTime();
         const endDate = new Date('2026-05-21T09:00:00').getTime();
-        const totalCourseMs = endDate - startDate; // סך הזמן הכולל במילישניות
+        const totalCourseMs = endDate - startDate;
 
-        // הגדרת זמני ההחרגה (סופי שבוע)
         const exclusions = [
             { start: new Date('2026-05-08T11:00:00').getTime(), end: new Date('2026-05-10T09:00:00').getTime() },
             { start: new Date('2026-05-15T11:00:00').getTime(), end: new Date('2026-05-17T09:00:00').getTime() }
@@ -115,13 +135,34 @@
 
         let isNetMode = true;
 
+        function shootConfetti() {
+            var duration = 3 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+            function randomInRange(min, max) {
+              return Math.random() * (max - min) + min;
+            }
+
+            var interval = setInterval(function() {
+              var timeLeft = animationEnd - Date.now();
+
+              if (timeLeft <= 0) {
+                return clearInterval(interval);
+              }
+
+              var particleCount = 50 * (timeLeft / duration);
+              confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } });
+              confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
+            }, 250);
+        }
+
         function updateProgress() {
             const now = new Date().getTime();
             
             let totalDuration = endDate - startDate;
             let elapsed = now - startDate;
 
-            // טיפול במקרי קצה (לפני ההתחלה או אחרי הסיום)
             if (elapsed < 0) elapsed = 0;
             if (elapsed > totalDuration) elapsed = totalDuration;
 
@@ -148,7 +189,35 @@
             percentage = Math.max(0, Math.min(100, percentage));
 
             document.getElementById('percentageDisplay').innerText = percentage.toFixed(4) + '%';
-            document.getElementById('progressBar').style.width = percentage + '%';
+            const pBar = document.getElementById('progressBar');
+            pBar.style.width = percentage + '%';
+
+            const milestoneMsg = document.getElementById('milestoneMsg');
+            const container = document.getElementById('mainContainer');
+            
+            // חלון החגיגה: רק בין 25% ל-28%
+            if (percentage >= 25 && percentage < 28) {
+                pBar.style.backgroundColor = '#f1c40f'; 
+                milestoneMsg.style.display = 'block';
+                container.classList.add('celebration-glow');
+
+                const hasCelebrated = localStorage.getItem('celebrated25Percent');
+                
+                if (!hasCelebrated) {
+                    shootConfetti(); 
+                    localStorage.setItem('celebrated25Percent', 'true'); 
+                }
+            } else {
+                // חזרה לשגרה (מתחת ל-25 או מעל 28)
+                pBar.style.backgroundColor = '#27ae60'; 
+                milestoneMsg.style.display = 'none';
+                container.classList.remove('celebration-glow');
+                
+                // איפוס הזיכרון רק אם חזרנו אחורה מתחת ל-25 (למשל במקרה של שינוי תאריכים)
+                if (percentage < 25) {
+                    localStorage.removeItem('celebrated25Percent'); 
+                }
+            }
         }
 
         document.getElementById('toggleModeBtn').addEventListener('click', () => {
@@ -166,7 +235,6 @@
             updateProgress();
         });
 
-        // חישוב אחוז מהזמן הכולל לפי כמות דקות
         function calcPercentFromTotal(minutes) {
             const ms = minutes * 60 * 1000;
             return ((ms / totalCourseMs) * 100).toFixed(4) + '%';
@@ -174,14 +242,17 @@
 
         function getRandomFact() {
             const facts = [
+                `הידעת? הליכה לאולם הנגב (3 דקות) לוקחת כ-${calcPercentFromTotal(3)} מהקורס.`,
                 `הידעת? הנחת תפילין בבוקר (5 דקות) לוקחת כ-${calcPercentFromTotal(5)} מהזמן הכולל של הקורס.`,
-                `הידעת? הורדת התנסות לוקחת לך ${calcPercentFromTotal(20)} מכל ההתנסות.`,
+                `הידעת? המתנה בהקשב מחוץ לכיתה (10 דקות) שורפת ${calcPercentFromTotal(10)} מהקורס.`,
+                `הידעת? חיפוש מי חסר בשלשות (7 דקות) מבזבז ${calcPercentFromTotal(7)} מזמן הקורס.`,
+                `הידעת? הורדת התנסות לוקחת לך ${calcPercentFromTotal(20)} מזמן הקורס.`,
+                `הידעת? עמידה בתור לחדר האוכל (15 דקות) לוקחת ${calcPercentFromTotal(15)} מהקורס.`,
+                `הידעת? גילוח וצחצוח בוקר (4 דקות) לוקחים כ-${calcPercentFromTotal(4)} מזמן הקורס.`,
                 `הידעת? שינה של 7 שעות הלילה לוקחת ${calcPercentFromTotal(7 * 60)} מכל הקורס.`,
                 `הידעת? ישיבה של 15 דקות בשירותים שורפת ${calcPercentFromTotal(15)} מהקורס.`,
-                `הידעת? צחצוח שיניים (בערך 3 דקות) לוקח כ-${calcPercentFromTotal(3)} מזמן הקורס.`,
-                `הידעת? לקח לי 1.5% מהקורס להכין את האתר הזה!`,
-                `הידעת? ריצת 3 ק"מ ב-15:15 דקות לוקחת ${calcPercentFromTotal(15.25)} מזמן הקורס.`,
-                `הידעת? חליטת 36 גרם אספרסו ב-30 שניות שורפת בדיוק ${calcPercentFromTotal(0.5)} מהקורס.`
+                `הידעת? ריצת 3 ק"מ ב-15:30 דקות לוקחת ${calcPercentFromTotal(15.5)} מזמן הקורס.`,
+                `הידעת? לקח לי 1.5% מהקורס להכין את האתר הזה!`
             ];
             return facts[Math.floor(Math.random() * facts.length)];
         }
@@ -189,19 +260,18 @@
         const didYouKnowEl = document.getElementById('didYouKnow');
         
         function changeFact() {
-            didYouKnowEl.style.opacity = 0; // העלמה חלקה
+            didYouKnowEl.style.opacity = 0; 
             setTimeout(() => {
                 didYouKnowEl.innerText = getRandomFact();
-                didYouKnowEl.style.opacity = 1; // חזרה חלקה
+                didYouKnowEl.style.opacity = 1; 
             }, 500);
         }
 
-        // הפעלות ראשוניות וטיימרים
         setInterval(updateProgress, 50);
         updateProgress();
         
-        changeFact(); // עובדה ראשונה מיד בטעינה
-        setInterval(changeFact, 12000); // החלפת עובדה כל 12 שניות
+        changeFact(); 
+        setInterval(changeFact, 12000); 
     </script>
 </body>
 </html>
