@@ -26,12 +26,18 @@
             max-width: 500px;
             width: 90%;
             position: relative;
-            transition: box-shadow 0.5s ease, border 0.5s ease;
+            /* מעבר חלק לאפקטים החגיגיים */
+            transition: box-shadow 0.6s ease-out, border 0.6s ease-out; 
+            border: 2px solid transparent; /* הכנה לגבול מוזהב */
         }
+
+        /* אפקט הילה גדול ובולט לקונטיינר ב-25% */
         .celebration-glow {
-            box-shadow: 0 0 30px rgba(241, 196, 15, 0.5);
-            border: 2px solid #f1c40f;
+            /* שתי שכבות של צל מוזהב למראה עשיר ובולט */
+            box-shadow: 0 0 60px rgba(241, 196, 15, 0.8), 0 0 100px rgba(241, 196, 15, 0.4);
+            border: 3px solid #f1c40f;
         }
+
         h1 {
             margin-top: 0;
             font-size: 24px;
@@ -53,10 +59,18 @@
         .percentage {
             font-size: 48px;
             font-weight: bold;
-            color: #27ae60;
+            color: #27ae60; /* צבע ברירת מחדל ירוק */
             margin: 10px 0 20px 0;
             font-variant-numeric: tabular-nums;
+            transition: color 0.6s ease, text-shadow 0.6s ease; /* מעבר חלק לצבע זהב */
         }
+
+        /* סגנון חגיגי לפונט האחוזים בזהב */
+        .celebration-percentage {
+            color: #f1c40f; /* צבע זהב */
+            text-shadow: 0 0 15px rgba(241, 196, 15, 0.7); /* הילת טקסט מוזהבת */
+        }
+
         .progress-bar-container {
             width: 100%;
             background-color: #e0e0e0;
@@ -124,10 +138,12 @@
     </div>
 
     <script>
+        // תאריכי התחלה וסיום
         const startDate = new Date('2026-04-23T09:00:00').getTime();
         const endDate = new Date('2026-05-21T09:00:00').getTime();
         const totalCourseMs = endDate - startDate;
 
+        // הגדרת זמני ההחרגה
         const exclusions = [
             { start: new Date('2026-05-08T11:00:00').getTime(), end: new Date('2026-05-10T09:00:00').getTime() },
             { start: new Date('2026-05-15T11:00:00').getTime(), end: new Date('2026-05-17T09:00:00').getTime() }
@@ -135,19 +151,47 @@
 
         let isNetMode = true;
 
+        // פונקציית פיצוץ הקונפטי - משופרת לפיצוץ מסיבי
         function shootConfetti() {
-            var duration = 3 * 1000;
-            var animationEnd = Date.now() + duration;
-            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
-            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+            // הגדרות פיצוץ בסיסיות (כמות חלקיקים גדולה)
+            const count = 300; 
+            const defaults = {
+              origin: { y: 0.7 }, // מתחיל קצת נמוך כדי שיראו את העלייה
+              zIndex: 1000,
+            };
 
-            var interval = setInterval(function() {
-              var timeLeft = animationEnd - Date.now();
-              if (timeLeft <= 0) return clearInterval(interval);
-              var particleCount = 50 * (timeLeft / duration);
-              confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } });
-              confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
-            }, 250);
+            // פונקציה לירי של מטחים שונים
+            function fire(particleRatio, opts) {
+              confetti({
+                ...defaults,
+                ...opts,
+                particleCount: Math.floor(count * particleRatio),
+              });
+            }
+
+            // סדרה של פיצוצים קטנים עוקבים ליצירת מראה עשיר
+            fire(0.25, {
+              spread: 26,
+              startVelocity: 55,
+            });
+            fire(0.2, {
+              spread: 60,
+            });
+            fire(0.35, {
+              spread: 100,
+              decay: 0.91,
+              scalar: 0.8
+            });
+            fire(0.1, {
+              spread: 120,
+              startVelocity: 25,
+              decay: 0.92,
+              scalar: 1.2
+            });
+            fire(0.1, {
+              spread: 120,
+              startVelocity: 45,
+            });
         }
 
         function updateProgress() {
@@ -184,23 +228,29 @@
             // לוגיקת החגיגה - לפי מה שמוצג על המסך
             const milestoneMsg = document.getElementById('milestoneMsg');
             const container = document.getElementById('mainContainer');
+            const percentageDisplay = document.getElementById('percentageDisplay');
             
+            // טווח החגיגה: בין 25% ל-28%
             if (displayPercentage >= 25 && displayPercentage < 28) {
-                pBar.style.backgroundColor = '#f1c40f'; 
+                pBar.style.backgroundColor = '#f1c40f'; // בר מוזהב
                 milestoneMsg.style.display = 'block';
-                container.classList.add('celebration-glow');
+                container.classList.add('celebration-glow'); // הילה גדולה לקונטיינר
+                percentageDisplay.classList.add('celebration-percentage'); // פונט אחוזים בזהב
 
-                // מפתח זיכרון נפרד לכל מצב
+                // מפתח זיכרון נפרד לכל מצב כדי שכל אחד יקבל פיצוץ בפעם הראשונה שלו
                 const storageKey = isNetMode ? 'celebrated25Net' : 'celebrated25Gross';
                 if (!localStorage.getItem(storageKey)) {
-                    shootConfetti(); 
-                    localStorage.setItem(storageKey, 'true'); 
+                    shootConfetti(); // הפיצוץ המסיבי
+                    localStorage.setItem(storageKey, 'true'); // שומר שלא יתפוצץ שוב
                 }
             } else {
+                // חזרה למראה הרגיל (מחוץ לטווח ה-25%-28%)
                 pBar.style.backgroundColor = '#27ae60'; 
                 milestoneMsg.style.display = 'none';
                 container.classList.remove('celebration-glow');
+                percentageDisplay.classList.remove('celebration-percentage');
                 
+                // איפוס הזיכרון רק אם יורדים חזרה מתחת ל-25%
                 if (displayPercentage < 25) {
                     localStorage.removeItem(isNetMode ? 'celebrated25Net' : 'celebrated25Gross'); 
                 }
@@ -257,6 +307,7 @@
             }, 500);
         }
 
+        // הפעלות ראשוניות וטיימרים
         setInterval(updateProgress, 50);
         updateProgress();
         changeFact(); 
