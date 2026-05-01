@@ -132,7 +132,7 @@
         </div>
 
         <button id="toggleModeBtn">הצג ברוטו (כולל סופ"שים)</button>
-        <div class="mode-label" id="modeLabel">מצב נוכחי: נטו (ללא 8-9.5 ו-15-16.5)</div>
+        <div class="mode-label" id="modeLabel">מצב נוכחי: נטו (ללא 1-2.5 ו-8-9.5)</div>
 
         <div class="did-you-know" id="didYouKnow"></div>
     </div>
@@ -143,10 +143,10 @@
         const endDate = new Date('2026-05-21T09:00:00').getTime();
         const totalCourseMs = endDate - startDate;
 
-        // הגדרת זמני ההחרגה
+        // הגדרת זמני ההחרגה המעודכנים (סופ"שים)
         const exclusions = [
-            { start: new Date('2026-05-08T11:00:00').getTime(), end: new Date('2026-05-10T09:00:00').getTime() },
-            { start: new Date('2026-05-15T11:00:00').getTime(), end: new Date('2026-05-17T09:00:00').getTime() }
+            { start: new Date('2026-05-01T11:00:00').getTime(), end: new Date('2026-05-03T09:00:00').getTime() },
+            { start: new Date('2026-05-08T11:00:00').getTime(), end: new Date('2026-05-10T09:00:00').getTime() }
         ];
 
         let isNetMode = true;
@@ -263,7 +263,7 @@
             const label = document.getElementById('modeLabel');
             if (isNetMode) {
                 btn.innerText = 'הצג ברוטו (כולל סופ"שים)';
-                label.innerText = 'מצב נוכחי: נטו (ללא 8-9.5 ו-15-16.5)';
+                label.innerText = 'מצב נוכחי: נטו (ללא 1-2.5 ו-8-9.5)';
             } else {
                 btn.innerText = 'הצג נטו (ללא סופ"שים)';
                 label.innerText = 'מצב נוכחי: ברוטו (כולל הכל)';
