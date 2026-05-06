@@ -16,6 +16,7 @@
             margin: 0;
             color: #333;
             overflow: hidden; 
+            transition: background-color 0.5s ease;
         }
         .container {
             background: white;
@@ -26,22 +27,26 @@
             max-width: 500px;
             width: 90%;
             position: relative;
-            /* מעבר חלק לאפקטים החגיגיים */
             transition: box-shadow 0.6s ease-out, border 0.6s ease-out; 
-            border: 2px solid transparent; /* הכנה לגבול מוזהב */
+            border: 2px solid transparent; 
+            z-index: 1;
         }
 
-        /* אפקט הילה גדול ובולט לקונטיינר ב-25% */
         .celebration-glow {
-            /* שתי שכבות של צל מוזהב למראה עשיר ובולט */
             box-shadow: 0 0 60px rgba(241, 196, 15, 0.8), 0 0 100px rgba(241, 196, 15, 0.4);
             border: 3px solid #f1c40f;
+        }
+        
+        .celebration-glow-50 {
+            box-shadow: 0 0 60px rgba(52, 152, 219, 0.8), 0 0 100px rgba(52, 152, 219, 0.4);
+            border: 3px solid #3498db;
         }
 
         h1 {
             margin-top: 0;
             font-size: 24px;
             color: #2c3e50;
+            transition: color 0.5s ease;
         }
         .milestone-msg {
             font-size: 18px;
@@ -59,16 +64,15 @@
         .percentage {
             font-size: 48px;
             font-weight: bold;
-            color: #27ae60; /* צבע ברירת מחדל ירוק */
+            color: #27ae60; 
             margin: 10px 0 20px 0;
             font-variant-numeric: tabular-nums;
-            transition: color 0.6s ease, text-shadow 0.6s ease; /* מעבר חלק לצבע זהב */
+            transition: color 0.6s ease, text-shadow 0.6s ease; 
         }
 
-        /* סגנון חגיגי לפונט האחוזים בזהב */
         .celebration-percentage {
-            color: #f1c40f; /* צבע זהב */
-            text-shadow: 0 0 15px rgba(241, 196, 15, 0.7); /* הילת טקסט מוזהבת */
+            color: #f1c40f; 
+            text-shadow: 0 0 15px rgba(241, 196, 15, 0.7); 
         }
 
         .progress-bar-container {
@@ -85,7 +89,7 @@
             width: 0%;
             transition: width 0.1s linear, background-color 0.5s ease;
         }
-        button {
+        button.action-btn {
             background-color: #3498db;
             color: white;
             border: none;
@@ -95,7 +99,7 @@
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
-        button:hover {
+        button.action-btn:hover {
             background-color: #2980b9;
         }
         .mode-label {
@@ -118,32 +122,174 @@
             align-items: center;
             transition: opacity 0.5s ease;
         }
+
+        /* כפתור חגיגת 50 אחוז */
+        .celebrate-50-btn {
+            display: none;
+            background: linear-gradient(45deg, #e74c3c, #f1c40f);
+            color: white;
+            border: none;
+            padding: 20px 30px;
+            font-size: 24px;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            margin: 20px 0;
+            animation: pulse-btn 1s infinite alternate;
+            box-shadow: 0 10px 25px rgba(231, 76, 60, 0.5);
+            width: 100%;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        }
+        @keyframes pulse-btn {
+            0% { transform: scale(1); box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4); }
+            100% { transform: scale(1.05); box-shadow: 0 15px 30px rgba(241, 196, 15, 0.6); }
+        }
+
+        /* ----- סגנונות RAINBOW גלובליים לחגיגת 50% ----- */
+        @keyframes rainbow-anim {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+
+        .rainbow-active h1,
+        .rainbow-active .percentage,
+        .rainbow-active .milestone-msg,
+        .rainbow-active .mode-label,
+        .rainbow-active .did-you-know {
+            background: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+            background-size: 200% auto;
+            color: transparent !important;
+            -webkit-background-clip: text !important;
+            background-clip: text !important;
+            animation: rainbow-anim 2s linear infinite !important;
+        }
+
+        .rainbow-active button.action-btn {
+            background: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3) !important;
+            background-size: 200% auto;
+            color: white !important;
+            animation: rainbow-anim 2s linear infinite !important;
+            border: none;
+            text-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+
+        .rainbow-active .progress-bar {
+            background: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3) !important;
+            background-size: 200% auto;
+            animation: rainbow-anim 2s linear infinite !important;
+        }
+
+        /* סגנונות למים של ה-50% - עיצוב Meme קלאסי ונקי */
+        .meme-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .meme-container {
+            position: relative;
+            max-width: 90%;
+            width: 600px;
+            text-align: center;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .meme-container img {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.2);
+            display: block;
+        }
+        
+        /* טקסט Meme לבן עם מסגרת שחורה */
+        .meme-text {
+            position: absolute;
+            top: 5%; /* קרוב לקצה העליון */
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Impact', sans-serif;
+            font-size: 4.5rem;
+            color: white; /* צבע לבן חלק */
+            -webkit-text-stroke: 3px black; /* מסגרת שחורה עבה */
+            text-shadow: 4px 4px 0px #000; /* הצללה נוספת לעומק */
+            width: 95%;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+        .meme-subtext {
+            position: absolute;
+            bottom: 5%; /* קרוב לקצה התחתון */
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Impact', sans-serif;
+            font-size: 2.5rem;
+            color: white;
+            -webkit-text-stroke: 2px black;
+            text-shadow: 3px 3px 0px #000;
+            width: 95%;
+            text-transform: uppercase;
+        }
+        
+        .close-meme-btn {
+            margin-top: 30px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            font-size: 20px;
+            font-weight: bold;
+            padding: 15px 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            z-index: 10000;
+        }
+        .close-meme-btn:hover {
+            background-color: #c0392b;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
     </style>
 </head>
 <body>
 
+    <audio id="halfwayAudio" src="halfway.mp3" preload="auto" loop></audio>
+
+    <div id="memeOverlay" class="meme-overlay">
+        <div class="meme-container">
+            <img src="wall.jpg" alt="Brick Wall">
+            <div class="meme-text">נגענו בקיר!</div>
+            <div class="meme-subtext">WOOOAH, WE'RE HALFWAY THERE!</div>
+        </div>
+        <button id="closeMemeBtn" class="close-meme-btn">יאללה להמשיך</button>
+    </div>
+
     <div class="container" id="mainContainer">
         <h1>התקדמות הקורס</h1>
-        <div class="milestone-msg" id="milestoneMsg">🎉 25% מהדרך מאחורינו! 🎉</div>
-        <div class="percentage" id="percentageDisplay">0.0000%</div>
+        <div class="milestone-msg" id="milestoneMsg"></div>
         
-        <div class="progress-bar-container">
+        <button id="celebrate50Btn" class="celebrate-50-btn"></button>
+
+        <div class="percentage" id="percentageDisplay">0.0000%</div>
+        <div class="progress-bar-container" id="progressBarContainer">
             <div class="progress-bar" id="progressBar"></div>
         </div>
 
-        <button id="toggleModeBtn">הצג ברוטו (כולל סופ"שים)</button>
+        <button id="toggleModeBtn" class="action-btn">הצג ברוטו (כולל סופ"שים)</button>
         <div class="mode-label" id="modeLabel">מצב נוכחי: נטו (ללא 1-2.5 ו-8-9.5)</div>
 
         <div class="did-you-know" id="didYouKnow"></div>
     </div>
 
     <script>
-        // תאריכי התחלה וסיום
         const startDate = new Date('2026-04-23T09:00:00').getTime();
         const endDate = new Date('2026-05-21T09:00:00').getTime();
         const totalCourseMs = endDate - startDate;
 
-        // הגדרת זמני ההחרגה המעודכנים (סופ"שים)
         const exclusions = [
             { start: new Date('2026-05-01T11:00:00').getTime(), end: new Date('2026-05-03T09:00:00').getTime() },
             { start: new Date('2026-05-08T11:00:00').getTime(), end: new Date('2026-05-10T09:00:00').getTime() }
@@ -151,58 +297,56 @@
 
         let isNetMode = true;
 
-        // פונקציית פיצוץ הקונפטי - משופרת לפיצוץ מסיבי
         function shootConfetti() {
-            // הגדרות פיצוץ בסיסיות (כמות חלקיקים גדולה)
             const count = 300; 
-            const defaults = {
-              origin: { y: 0.7 }, // מתחיל קצת נמוך כדי שיראו את העלייה
-              zIndex: 1000,
-            };
+            const defaults = { origin: { y: 0.7 }, zIndex: 10000 }; 
 
-            // פונקציה לירי של מטחים שונים
             function fire(particleRatio, opts) {
-              confetti({
-                ...defaults,
-                ...opts,
-                particleCount: Math.floor(count * particleRatio),
-              });
+              confetti({ ...defaults, ...opts, particleCount: Math.floor(count * particleRatio) });
             }
 
-            // סדרה של פיצוצים קטנים עוקבים ליצירת מראה עשיר
-            fire(0.25, {
-              spread: 26,
-              startVelocity: 55,
-            });
-            fire(0.2, {
-              spread: 60,
-            });
-            fire(0.35, {
-              spread: 100,
-              decay: 0.91,
-              scalar: 0.8
-            });
-            fire(0.1, {
-              spread: 120,
-              startVelocity: 25,
-              decay: 0.92,
-              scalar: 1.2
-            });
-            fire(0.1, {
-              spread: 120,
-              startVelocity: 45,
-            });
+            fire(0.25, { spread: 26, startVelocity: 55 });
+            fire(0.2, { spread: 60 });
+            fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
+            fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
+            fire(0.1, { spread: 120, startVelocity: 45 });
         }
 
+        // המשתמש לוחץ על כפתור החגיגה בפעם הראשונה או ביוזמתו
+        document.getElementById('celebrate50Btn').addEventListener('click', () => {
+            const storageKey50 = isNetMode ? 'celebrated50Net' : 'celebrated50Gross';
+            
+            shootConfetti();
+            document.getElementById('memeOverlay').style.display = 'flex'; 
+            document.getElementById('halfwayAudio').play().catch(e => console.log('Audio error', e));
+            
+            // שומר שהוא חגג
+            localStorage.setItem(storageKey50, 'true'); 
+            
+            // מפעיל את פונקציית העדכון מיד כדי שהיא תזהה שהוא חגג ותציג את האתר ברקע
+            updateProgress();
+        });
+
+        document.getElementById('closeMemeBtn').addEventListener('click', () => {
+            document.getElementById('memeOverlay').style.display = 'none';
+            const audio = document.getElementById('halfwayAudio');
+            audio.pause();
+            audio.currentTime = 0; 
+        });
+
         function updateProgress() {
-            const now = new Date().getTime();
+            // =================================================================
+            // הזרקת זמן - מחק שורה זו בסוף הבדיקות ותחזיר את ההערה משורת ה-now למעלה
+            const now = new Date('2026-05-07T12:00:00').getTime(); 
+            // const now = new Date().getTime(); 
+            // =================================================================
+
             let totalDuration = endDate - startDate;
             let elapsed = now - startDate;
 
             if (elapsed < 0) elapsed = 0;
             if (elapsed > totalDuration) elapsed = totalDuration;
 
-            // חישוב נטו
             let excludedTotal = 0;
             let excludedElapsed = 0;
             exclusions.forEach(ex => {
@@ -218,43 +362,101 @@
             const netPercentage = Math.max(0, Math.min(100, (netElapsed / netTotal) * 100));
             const grossPercentage = Math.max(0, Math.min(100, (elapsed / totalDuration) * 100));
 
-            // מה מוצג כרגע?
             const displayPercentage = isNetMode ? netPercentage : grossPercentage;
 
             document.getElementById('percentageDisplay').innerText = displayPercentage.toFixed(4) + '%';
             const pBar = document.getElementById('progressBar');
             pBar.style.width = displayPercentage + '%';
 
-            // לוגיקת החגיגה - לפי מה שמוצג על המסך
             const milestoneMsg = document.getElementById('milestoneMsg');
             const container = document.getElementById('mainContainer');
             const percentageDisplay = document.getElementById('percentageDisplay');
+            const progressBarContainer = document.getElementById('progressBarContainer');
+            const toggleModeBtn = document.getElementById('toggleModeBtn');
+            const modeLabel = document.getElementById('modeLabel');
+            const didYouKnow = document.getElementById('didYouKnow');
+            const celebrateBtn = document.getElementById('celebrate50Btn');
             
-            // טווח החגיגה: בין 25% ל-28%
-            if (displayPercentage >= 25 && displayPercentage < 28) {
-                pBar.style.backgroundColor = '#f1c40f'; // בר מוזהב
-                milestoneMsg.style.display = 'block';
-                container.classList.add('celebration-glow'); // הילה גדולה לקונטיינר
-                percentageDisplay.classList.add('celebration-percentage'); // פונט אחוזים בזהב
+            // טווח ה-50% עד 52%
+            if (displayPercentage >= 50 && displayPercentage < 52) {
+                const storageKey50 = isNetMode ? 'celebrated50Net' : 'celebrated50Gross';
+                const hasCelebrated = localStorage.getItem(storageKey50);
 
-                // מפתח זיכרון נפרד לכל מצב כדי שכל אחד יקבל פיצוץ בפעם הראשונה שלו
-                const storageKey = isNetMode ? 'celebrated25Net' : 'celebrated25Gross';
-                if (!localStorage.getItem(storageKey)) {
-                    shootConfetti(); // הפיצוץ המסיבי
-                    localStorage.setItem(storageKey, 'true'); // שומר שלא יתפוצץ שוב
-                }
-            } else {
-                // חזרה למראה הרגיל (מחוץ לטווח ה-25%-28%)
-                pBar.style.backgroundColor = '#27ae60'; 
-                milestoneMsg.style.display = 'none';
-                container.classList.remove('celebration-glow');
-                percentageDisplay.classList.remove('celebration-percentage');
-                
-                // איפוס הזיכרון רק אם יורדים חזרה מתחת ל-25%
-                if (displayPercentage < 25) {
-                    localStorage.removeItem(isNetMode ? 'celebrated25Net' : 'celebrated25Gross'); 
+                if (!hasCelebrated) {
+                    // עדיין לא חגג - נועלים את המסך, מציגים רק את כפתור החגיגה הענק
+                    percentageDisplay.style.display = 'none';
+                    progressBarContainer.style.display = 'none';
+                    toggleModeBtn.style.display = 'none';
+                    modeLabel.style.display = 'none';
+                    didYouKnow.style.display = 'none';
+                    milestoneMsg.style.display = 'none';
+
+                    container.className = 'container celebration-glow-50';
+                    document.body.classList.remove('rainbow-active'); 
+
+                    celebrateBtn.style.display = 'block';
+                    celebrateBtn.innerText = '🚨 הגענו ל-50%! לחץ לפתיחת האתר 🚨';
+                } else {
+                    // כבר חגג - מחזירים את האתר הרגיל עם אפקטים של ריינבו!
+                    percentageDisplay.style.display = 'block';
+                    progressBarContainer.style.display = 'block';
+                    toggleModeBtn.style.display = 'inline-block';
+                    modeLabel.style.display = 'block';
+                    didYouKnow.style.display = 'flex';
+                    
+                    milestoneMsg.innerText = '🔥 חצי קורס מאחורינו! נגענו בקיר! 🔥';
+                    milestoneMsg.style.display = 'block';
+
+                    pBar.style.backgroundColor = '#3498db'; 
+                    container.className = 'container celebration-glow-50';
+                    document.body.classList.add('rainbow-active'); 
+
+                    // הכפתור נשאר דלוק למי שרוצה עוד פעם
+                    celebrateBtn.style.display = 'block';
+                    celebrateBtn.innerText = '🎁 הפעל שוב את חגיגת הקיר! 🎁';
                 }
             }
+            // חגיגת ה-25%
+            else if (displayPercentage >= 25 && displayPercentage < 28) {
+                restoreUI();
+                pBar.style.backgroundColor = '#f1c40f'; 
+                milestoneMsg.innerText = '🎉 25% מהדרך מאחורינו! 🎉';
+                milestoneMsg.style.display = 'block';
+                
+                container.className = 'container celebration-glow'; 
+                percentageDisplay.className = 'percentage celebration-percentage'; 
+                
+                document.body.classList.remove('rainbow-active'); 
+                celebrateBtn.style.display = 'none';
+
+                const storageKey25 = isNetMode ? 'celebrated25Net' : 'celebrated25Gross';
+                if (!localStorage.getItem(storageKey25)) {
+                    shootConfetti(); 
+                    localStorage.setItem(storageKey25, 'true'); 
+                }
+            } 
+            // מצב שגרה
+            else {
+                restoreUI();
+                pBar.style.backgroundColor = '#27ae60'; 
+                milestoneMsg.style.display = 'none';
+                container.className = 'container';
+                percentageDisplay.className = 'percentage';
+                document.body.classList.remove('rainbow-active'); 
+                celebrateBtn.style.display = 'none';
+                
+                if (displayPercentage < 50) localStorage.removeItem(isNetMode ? 'celebrated50Net' : 'celebrated50Gross'); 
+                if (displayPercentage < 25) localStorage.removeItem(isNetMode ? 'celebrated25Net' : 'celebrated25Gross'); 
+            }
+        }
+
+        // פונקציית עזר להחזרת האלמנטים המוסתרים לתצוגה במקרה שהמשתמש עובר מצב
+        function restoreUI() {
+            document.getElementById('percentageDisplay').style.display = 'block';
+            document.getElementById('progressBarContainer').style.display = 'block';
+            document.getElementById('toggleModeBtn').style.display = 'inline-block';
+            document.getElementById('modeLabel').style.display = 'block';
+            document.getElementById('didYouKnow').style.display = 'flex';
         }
 
         document.getElementById('toggleModeBtn').addEventListener('click', () => {
@@ -300,14 +502,15 @@
 
         const didYouKnowEl = document.getElementById('didYouKnow');
         function changeFact() {
-            didYouKnowEl.style.opacity = 0; 
-            setTimeout(() => {
-                didYouKnowEl.innerText = getRandomFact();
-                didYouKnowEl.style.opacity = 1; 
-            }, 500);
+            if(didYouKnowEl.style.display !== 'none') {
+                didYouKnowEl.style.opacity = 0; 
+                setTimeout(() => {
+                    didYouKnowEl.innerText = getRandomFact();
+                    didYouKnowEl.style.opacity = 1; 
+                }, 500);
+            }
         }
 
-        // הפעלות ראשוניות וטיימרים
         setInterval(updateProgress, 50);
         updateProgress();
         changeFact(); 
