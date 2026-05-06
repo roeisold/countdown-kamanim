@@ -145,7 +145,7 @@
             100% { transform: scale(1.05); box-shadow: 0 15px 30px rgba(241, 196, 15, 0.6); }
         }
 
-        /* ----- סגנונות RAINBOW גלובליים לחגיגת 50% ----- */
+        /* סגנונות RAINBOW גלובליים לחגיגת 50% */
         @keyframes rainbow-anim {
             0% { background-position: 0% center; }
             100% { background-position: 200% center; }
@@ -179,7 +179,7 @@
             animation: rainbow-anim 2s linear infinite !important;
         }
 
-        /* סגנונות למים של ה-50% - עיצוב Meme קלאסי ונקי */
+        /* סגנונות למים של ה-50% */
         .meme-overlay {
             display: none;
             position: fixed;
@@ -204,24 +204,23 @@
             display: block;
         }
         
-        /* טקסט Meme לבן עם מסגרת שחורה */
         .meme-text {
             position: absolute;
-            top: 5%; /* קרוב לקצה העליון */
+            top: 5%; 
             left: 50%;
             transform: translateX(-50%);
             font-family: 'Impact', sans-serif;
             font-size: 4.5rem;
-            color: white; /* צבע לבן חלק */
-            -webkit-text-stroke: 3px black; /* מסגרת שחורה עבה */
-            text-shadow: 4px 4px 0px #000; /* הצללה נוספת לעומק */
+            color: white; 
+            -webkit-text-stroke: 3px black; 
+            text-shadow: 4px 4px 0px #000; 
             width: 95%;
             line-height: 1.1;
             text-transform: uppercase;
         }
         .meme-subtext {
             position: absolute;
-            bottom: 5%; /* קרוב לקצה התחתון */
+            bottom: 5%; 
             left: 50%;
             transform: translateX(-50%);
             font-family: 'Impact', sans-serif;
@@ -320,10 +319,7 @@
             document.getElementById('memeOverlay').style.display = 'flex'; 
             document.getElementById('halfwayAudio').play().catch(e => console.log('Audio error', e));
             
-            // שומר שהוא חגג
             localStorage.setItem(storageKey50, 'true'); 
-            
-            // מפעיל את פונקציית העדכון מיד כדי שהיא תזהה שהוא חגג ותציג את האתר ברקע
             updateProgress();
         });
 
@@ -335,11 +331,7 @@
         });
 
         function updateProgress() {
-            // =================================================================
-            // הזרקת זמן - מחק שורה זו בסוף הבדיקות ותחזיר את ההערה משורת ה-now למעלה
-            const now = new Date('2026-05-07T12:00:00').getTime(); 
-            // const now = new Date().getTime(); 
-            // =================================================================
+            const now = new Date().getTime(); 
 
             let totalDuration = endDate - startDate;
             let elapsed = now - startDate;
@@ -383,7 +375,7 @@
                 const hasCelebrated = localStorage.getItem(storageKey50);
 
                 if (!hasCelebrated) {
-                    // עדיין לא חגג - נועלים את המסך, מציגים רק את כפתור החגיגה הענק
+                    // עדיין לא חגג - נועלים את המסך
                     percentageDisplay.style.display = 'none';
                     progressBarContainer.style.display = 'none';
                     toggleModeBtn.style.display = 'none';
@@ -397,7 +389,7 @@
                     celebrateBtn.style.display = 'block';
                     celebrateBtn.innerText = '🚨 הגענו ל-50%! לחץ לפתיחת האתר 🚨';
                 } else {
-                    // כבר חגג - מחזירים את האתר הרגיל עם אפקטים של ריינבו!
+                    // כבר חגג - מחזירים את האתר הרגיל עם אפקטים של ריינבו
                     percentageDisplay.style.display = 'block';
                     progressBarContainer.style.display = 'block';
                     toggleModeBtn.style.display = 'inline-block';
@@ -411,7 +403,6 @@
                     container.className = 'container celebration-glow-50';
                     document.body.classList.add('rainbow-active'); 
 
-                    // הכפתור נשאר דלוק למי שרוצה עוד פעם
                     celebrateBtn.style.display = 'block';
                     celebrateBtn.innerText = '🎁 הפעל שוב את חגיגת הקיר! 🎁';
                 }
@@ -450,7 +441,6 @@
             }
         }
 
-        // פונקציית עזר להחזרת האלמנטים המוסתרים לתצוגה במקרה שהמשתמש עובר מצב
         function restoreUI() {
             document.getElementById('percentageDisplay').style.display = 'block';
             document.getElementById('progressBarContainer').style.display = 'block';
@@ -501,20 +491,4 @@
         }
 
         const didYouKnowEl = document.getElementById('didYouKnow');
-        function changeFact() {
-            if(didYouKnowEl.style.display !== 'none') {
-                didYouKnowEl.style.opacity = 0; 
-                setTimeout(() => {
-                    didYouKnowEl.innerText = getRandomFact();
-                    didYouKnowEl.style.opacity = 1; 
-                }, 500);
-            }
-        }
-
-        setInterval(updateProgress, 50);
-        updateProgress();
-        changeFact(); 
-        setInterval(changeFact, 12000); 
-    </script>
-</body>
-</html>
+        function changeFact() 
