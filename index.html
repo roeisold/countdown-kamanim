@@ -311,7 +311,7 @@
             fire(0.1, { spread: 120, startVelocity: 45 });
         }
 
-        // המשתמש לוחץ על כפתור החגיגה בפעם הראשונה או ביוזמתו
+        // המשתמש לוחץ על כפתור החגיגה
         document.getElementById('celebrate50Btn').addEventListener('click', () => {
             const storageKey50 = isNetMode ? 'celebrated50Net' : 'celebrated50Gross';
             
@@ -375,7 +375,6 @@
                 const hasCelebrated = localStorage.getItem(storageKey50);
 
                 if (!hasCelebrated) {
-                    // עדיין לא חגג - נועלים את המסך
                     percentageDisplay.style.display = 'none';
                     progressBarContainer.style.display = 'none';
                     toggleModeBtn.style.display = 'none';
@@ -389,7 +388,6 @@
                     celebrateBtn.style.display = 'block';
                     celebrateBtn.innerText = '🚨 הגענו ל-50%! לחץ לפתיחת האתר 🚨';
                 } else {
-                    // כבר חגג - מחזירים את האתר הרגיל עם אפקטים של ריינבו
                     percentageDisplay.style.display = 'block';
                     progressBarContainer.style.display = 'block';
                     toggleModeBtn.style.display = 'inline-block';
@@ -491,4 +489,20 @@
         }
 
         const didYouKnowEl = document.getElementById('didYouKnow');
-        function changeFact() 
+        function changeFact() {
+            if(didYouKnowEl.style.display !== 'none') {
+                didYouKnowEl.style.opacity = 0; 
+                setTimeout(() => {
+                    didYouKnowEl.innerText = getRandomFact();
+                    didYouKnowEl.style.opacity = 1; 
+                }, 500);
+            }
+        }
+
+        setInterval(updateProgress, 50);
+        updateProgress();
+        changeFact(); 
+        setInterval(changeFact, 12000); 
+    </script>
+</body>
+</html>
