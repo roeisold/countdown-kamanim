@@ -140,6 +140,28 @@
             width: 100%;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
         }
+        
+        /* כפתור חגיגת אירוויזיון */
+        .eurovision-btn {
+            background: linear-gradient(45deg, #0038b8, #00bfff);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 15px;
+            box-shadow: 0 5px 15px rgba(0, 56, 184, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+            display: none; /* מוסתר כברירת מחדל, נדליק אותו ב-JS אם התאריך רלוונטי */
+        }
+        .eurovision-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 20px rgba(0, 56, 184, 0.6);
+        }
+
         @keyframes pulse-btn {
             0% { transform: scale(1); box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4); }
             100% { transform: scale(1.05); box-shadow: 0 15px 30px rgba(241, 196, 15, 0.6); }
@@ -179,7 +201,7 @@
             animation: rainbow-anim 2s linear infinite !important;
         }
 
-        /* סגנונות למים של ה-50% */
+        /* סגנונות לשכבות אוברליי */
         .meme-overlay {
             display: none;
             position: fixed;
@@ -231,6 +253,17 @@
             width: 95%;
             text-transform: uppercase;
         }
+
+        /* סגנון טקסט ייעודי לאירוויזיון */
+        .eurovision-text {
+            position: static;
+            transform: none;
+            font-size: 4rem;
+            color: #fff;
+            -webkit-text-stroke: 2px #0038b8;
+            text-shadow: 0 0 20px #0038b8, 3px 3px 0px #000;
+            margin-bottom: 20px;
+        }
         
         .close-meme-btn {
             margin-top: 30px;
@@ -257,6 +290,7 @@
 <body>
 
     <audio id="halfwayAudio" src="halfway.mp3" preload="auto" loop></audio>
+    <audio id="eurovisionAudio" src="eurovision.mp3" preload="auto" loop></audio>
 
     <div id="memeOverlay" class="meme-overlay">
         <div class="meme-container">
@@ -265,6 +299,14 @@
             <div class="meme-subtext">WOOOAH, WE'RE HALFWAY THERE!</div>
         </div>
         <button id="closeMemeBtn" class="close-meme-btn">יאללה להמשיך</button>
+    </div>
+
+    <div id="eurovisionOverlay" class="meme-overlay">
+        <div class="meme-container">
+            <div class="meme-text eurovision-text">מקום שני<br>באירוויזיון! 🇮🇱</div>
+            <div class="meme-subtext eurovision-text" style="font-size: 3rem;">דוז פואה!</div>
+        </div>
+        <button id="closeEurovisionBtn" class="close-meme-btn" style="background-color: #0038b8;">חזרה לאתר</button>
     </div>
 
     <div class="container" id="mainContainer">
@@ -281,6 +323,8 @@
         <button id="toggleModeBtn" class="action-btn">הצג ברוטו (כולל סופ"שים)</button>
         <div class="mode-label" id="modeLabel">מצב נוכחי: נטו (ללא 1-2.5 ו-8-9.5)</div>
 
+        <button id="eurovisionBtn" class="eurovision-btn">🎤 לחץ לחגיגות אירוויזיון! 🇮🇱</button>
+
         <div class="did-you-know" id="didYouKnow"></div>
     </div>
 
@@ -288,6 +332,9 @@
         const startDate = new Date('2026-04-23T09:00:00').getTime();
         const endDate = new Date('2026-05-21T09:00:00').getTime();
         const totalCourseMs = endDate - startDate;
+
+        // שעת פקיעת התוקף של כפתור האירוויזיון - 17.5.2026 בשעה 23:59:59
+        const eurovisionCutoffDate = new Date('2026-05-17T23:59:59').getTime();
 
         const exclusions = [
             { start: new Date('2026-05-01T11:00:00').getTime(), end: new Date('2026-05-03T09:00:00').getTime() },
@@ -299,11 +346,9 @@
         function shootConfetti() {
             const count = 300; 
             const defaults = { origin: { y: 0.7 }, zIndex: 10000 }; 
-
             function fire(particleRatio, opts) {
               confetti({ ...defaults, ...opts, particleCount: Math.floor(count * particleRatio) });
             }
-
             fire(0.25, { spread: 26, startVelocity: 55 });
             fire(0.2, { spread: 60 });
             fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
@@ -311,14 +356,28 @@
             fire(0.1, { spread: 120, startVelocity: 45 });
         }
 
-        // המשתמש לוחץ על כפתור החגיגה
+        function shootEurovisionConfetti() {
+            const duration = 5 * 1000;
+            const animationEnd = Date.now() + duration;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 10000, colors: ['#ffffff', '#0038b8'] };
+
+            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+
+            const interval = setInterval(function() {
+              const timeLeft = animationEnd - Date.now();
+              if (timeLeft <= 0) return clearInterval(interval);
+              
+              const particleCount = 50 * (timeLeft / duration);
+              confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } });
+              confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
+            }, 250);
+        }
+
         document.getElementById('celebrate50Btn').addEventListener('click', () => {
             const storageKey50 = isNetMode ? 'celebrated50Net' : 'celebrated50Gross';
-            
             shootConfetti();
             document.getElementById('memeOverlay').style.display = 'flex'; 
             document.getElementById('halfwayAudio').play().catch(e => console.log('Audio error', e));
-            
             localStorage.setItem(storageKey50, 'true'); 
             updateProgress();
         });
@@ -328,6 +387,19 @@
             const audio = document.getElementById('halfwayAudio');
             audio.pause();
             audio.currentTime = 0; 
+        });
+
+        document.getElementById('eurovisionBtn').addEventListener('click', () => {
+            shootEurovisionConfetti();
+            document.getElementById('eurovisionOverlay').style.display = 'flex';
+            document.getElementById('eurovisionAudio').play().catch(e => console.log('Eurovision Audio error', e));
+        });
+
+        document.getElementById('closeEurovisionBtn').addEventListener('click', () => {
+            document.getElementById('eurovisionOverlay').style.display = 'none';
+            const audio = document.getElementById('eurovisionAudio');
+            audio.pause();
+            audio.currentTime = 0;
         });
 
         function updateProgress() {
@@ -368,7 +440,11 @@
             const modeLabel = document.getElementById('modeLabel');
             const didYouKnow = document.getElementById('didYouKnow');
             const celebrateBtn = document.getElementById('celebrate50Btn');
+            const eurovisionBtn = document.getElementById('eurovisionBtn');
             
+            // בדיקת התאריך עבור כפתור האירוויזיון
+            const isEurovisionActive = now <= eurovisionCutoffDate;
+
             // טווח ה-50% עד 52%
             if (displayPercentage >= 50 && displayPercentage < 52) {
                 const storageKey50 = isNetMode ? 'celebrated50Net' : 'celebrated50Gross';
@@ -381,6 +457,7 @@
                     modeLabel.style.display = 'none';
                     didYouKnow.style.display = 'none';
                     milestoneMsg.style.display = 'none';
+                    eurovisionBtn.style.display = 'none'; // מוסתר בנעילת 50%
 
                     container.className = 'container celebration-glow-50';
                     document.body.classList.remove('rainbow-active'); 
@@ -393,6 +470,12 @@
                     toggleModeBtn.style.display = 'inline-block';
                     modeLabel.style.display = 'block';
                     didYouKnow.style.display = 'flex';
+                    
+                    if (isEurovisionActive) {
+                        eurovisionBtn.style.display = 'block';
+                    } else {
+                        eurovisionBtn.style.display = 'none';
+                    }
                     
                     milestoneMsg.innerText = '🔥 חצי קורס מאחורינו! נגענו בקיר! 🔥';
                     milestoneMsg.style.display = 'block';
@@ -407,7 +490,7 @@
             }
             // חגיגת ה-25%
             else if (displayPercentage >= 25 && displayPercentage < 28) {
-                restoreUI();
+                restoreUI(isEurovisionActive);
                 pBar.style.backgroundColor = '#f1c40f'; 
                 milestoneMsg.innerText = '🎉 25% מהדרך מאחורינו! 🎉';
                 milestoneMsg.style.display = 'block';
@@ -426,7 +509,7 @@
             } 
             // מצב שגרה
             else {
-                restoreUI();
+                restoreUI(isEurovisionActive);
                 pBar.style.backgroundColor = '#27ae60'; 
                 milestoneMsg.style.display = 'none';
                 container.className = 'container';
@@ -439,12 +522,18 @@
             }
         }
 
-        function restoreUI() {
+        function restoreUI(isEurovisionActive) {
             document.getElementById('percentageDisplay').style.display = 'block';
             document.getElementById('progressBarContainer').style.display = 'block';
             document.getElementById('toggleModeBtn').style.display = 'inline-block';
             document.getElementById('modeLabel').style.display = 'block';
             document.getElementById('didYouKnow').style.display = 'flex';
+            
+            if (isEurovisionActive) {
+                document.getElementById('eurovisionBtn').style.display = 'block';
+            } else {
+                document.getElementById('eurovisionBtn').style.display = 'none';
+            }
         }
 
         document.getElementById('toggleModeBtn').addEventListener('click', () => {
