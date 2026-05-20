@@ -109,7 +109,7 @@
             100% { background-position: 200% center; }
         }
 
-        .rainbow-active .percentage, .rainbow-active h1, .rainbow-active .did-you-know {
+        .rainbow-active .percentage, .rainbow-active h1, .rainbow-active .did-you-know, .final-text-rainbow {
             background: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
             background-size: 200% auto;
             color: transparent !important;
@@ -155,6 +155,24 @@
             border-radius: 8px;
             cursor: pointer;
         }
+
+        /* סגנון לתיבת הידעת המשופרת */
+        .did-you-know {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8f4f8;
+            border-right: 4px solid #3498db;
+            border-radius: 5px;
+            font-size: 15px;
+            text-align: right;
+            display: flex;
+            align-items: center;
+            min-height: 55px; /* מונע קפיצות במסך כשהטקסט מתחלף */
+        }
+        .dyk-text {
+            transition: opacity 0.5s ease;
+            opacity: 1;
+        }
     </style>
 </head>
 <body class="normal-mode">
@@ -190,9 +208,11 @@
         </div>
 
         <button id="toggleModeBtn" class="action-btn">הצג ברוטו (כולל סופ"שים)</button>
-        <div class="mode-label" id="modeLabel" style="margin-top:15px; font-size:14px; color:#7f8c8d; margin-bottom:25px;">מצב נוכחי: נטו</div>
+        <div class="mode-label" id="modeLabel" style="margin-top:15px; font-size:14px; color:#7f8c8d; margin-bottom:25px;">מצב נוכחי: נטו (ללא 1-2.5 ו-8-9.5)</div>
 
-        <div class="did-you-know" id="didYouKnow" style="margin-top:20px; padding:15px; background-color:#e8f4f8; border-right:4px solid #3498db; border-radius:5px; font-size:15px; text-align:right; display:flex; align-items:center;"></div>
+        <div class="did-you-know" id="didYouKnow">
+            <span id="dykText" class="dyk-text"></span>
+        </div>
     </div>
 
     <script>
@@ -248,7 +268,7 @@
         });
 
         function updateProgress() {
-            const now = new Date().getTime(); 
+            const now = new Date().getTime(); // שעון אמת
 
             let totalDuration = endDate - startDate;
             let elapsed = now - startDate;
@@ -344,6 +364,7 @@
         document.getElementById('toggleModeBtn').addEventListener('click', () => {
             isNetMode = !isNetMode;
             document.getElementById('toggleModeBtn').innerText = isNetMode ? 'הצג ברוטו (כולל סופ"שים)' : 'הצג נטו';
+            document.getElementById('modeLabel').innerText = isNetMode ? 'מצב נוכחי: נטו (ללא 1-2.5 ו-8-9.5)' : 'מצב נוכחי: ברוטו (כולל הכל)';
             updateProgress();
         });
 
@@ -365,16 +386,25 @@
         }
 
         setInterval(updateProgress, 50);
-        setInterval(() => {
-            const dyk = document.getElementById('didYouKnow');
-            if(dyk.style.display !== 'none') {
-                dyk.style.opacity = 0;
-                setTimeout(() => { dyk.innerText = getRandomFact(); dyk.style.opacity = 1; }, 500);
-            }
-        }, 12000);
         
+        // פונקציית הידעת מתוקנת - רק הטקסט מתעמעם ולא כל הקופסה
+        function changeFact() {
+            const dykContainer = document.getElementById('didYouKnow');
+            const dykText = document.getElementById('dykText');
+            if(dykContainer.style.display !== 'none') {
+                dykText.style.opacity = 0;
+                setTimeout(() => { 
+                    dykText.innerText = getRandomFact(); 
+                    dykText.style.opacity = 1; 
+                }, 500);
+            }
+        }
+
+        // טעינה ראשונית
+        document.getElementById('dykText').innerText = getRandomFact();
         updateProgress();
-        document.getElementById('didYouKnow').innerText = getRandomFact();
+        
+        setInterval(changeFact, 12000);
     </script>
 </body>
 </html>
