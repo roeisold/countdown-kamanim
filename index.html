@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>מונה התקדמות קורס</title>
+    <title>מונה התקדמות קורס - הסוף!</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
     <style>
         body {
@@ -32,47 +32,28 @@
             z-index: 1;
         }
 
-        .celebration-glow {
-            box-shadow: 0 0 60px rgba(241, 196, 15, 0.8), 0 0 100px rgba(241, 196, 15, 0.4);
-            border: 3px solid #f1c40f;
-        }
-        
         .celebration-glow-50 {
             box-shadow: 0 0 60px rgba(52, 152, 219, 0.8), 0 0 100px rgba(52, 152, 219, 0.4);
             border: 3px solid #3498db;
+        }
+
+        .celebration-glow-final {
+            box-shadow: 0 0 80px rgba(155, 89, 182, 0.8), 0 0 120px rgba(155, 89, 182, 0.4);
+            border: 4px solid #9b59b6;
         }
 
         h1 {
             margin-top: 0;
             font-size: 24px;
             color: #2c3e50;
-            transition: color 0.5s ease;
         }
-        .milestone-msg {
-            font-size: 18px;
-            font-weight: bold;
-            color: #d35400;
-            margin-bottom: 10px;
-            display: none; 
-            animation: bounce 2s infinite;
-        }
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
-            40% {transform: translateY(-5px);}
-            60% {transform: translateY(-3px);}
-        }
+        
         .percentage {
             font-size: 48px;
             font-weight: bold;
             color: #27ae60; 
             margin: 10px 0 20px 0;
             font-variant-numeric: tabular-nums;
-            transition: color 0.6s ease, text-shadow 0.6s ease; 
-        }
-
-        .celebration-percentage {
-            color: #f1c40f; 
-            text-shadow: 0 0 15px rgba(241, 196, 15, 0.7); 
         }
 
         .progress-bar-container {
@@ -89,6 +70,7 @@
             width: 0%;
             transition: width 0.1s linear, background-color 0.5s ease;
         }
+        
         button.action-btn {
             background-color: #3498db;
             color: white;
@@ -99,34 +81,9 @@
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
-        button.action-btn:hover {
-            background-color: #2980b9;
-        }
-        .mode-label {
-            margin-top: 15px;
-            font-size: 14px;
-            color: #7f8c8d;
-            margin-bottom: 25px;
-        }
-        .did-you-know {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #e8f4f8;
-            border-right: 4px solid #3498db;
-            border-radius: 5px;
-            font-size: 15px;
-            color: #2c3e50;
-            text-align: right;
-            min-height: 45px;
-            display: flex;
-            align-items: center;
-            transition: opacity 0.5s ease;
-        }
 
-        /* כפתור חגיגת 50 אחוז */
-        .celebrate-50-btn {
+        .celebrate-50-btn, .celebrate-final-btn {
             display: none;
-            background: linear-gradient(45deg, #e74c3c, #f1c40f);
             color: white;
             border: none;
             padding: 20px 30px;
@@ -135,49 +92,24 @@
             border-radius: 12px;
             cursor: pointer;
             margin: 20px 0;
-            animation: pulse-btn 1s infinite alternate;
-            box-shadow: 0 10px 25px rgba(231, 76, 60, 0.5);
             width: 100%;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+            animation: pulse-btn 1s infinite alternate;
         }
         
-        /* כפתור חגיגת אירוויזיון */
-        .eurovision-btn {
-            background: linear-gradient(45deg, #0038b8, #00bfff);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 15px;
-            box-shadow: 0 5px 15px rgba(0, 56, 184, 0.4);
-            transition: transform 0.2s, box-shadow 0.2s;
-            width: 100%;
-            display: none; /* מוסתר כברירת מחדל, נדליק אותו ב-JS אם התאריך רלוונטי */
-        }
-        .eurovision-btn:hover {
-            transform: scale(1.02);
-            box-shadow: 0 8px 20px rgba(0, 56, 184, 0.6);
-        }
+        .celebrate-50-btn { background: linear-gradient(45deg, #e74c3c, #f1c40f); }
+        .celebrate-final-btn { background: linear-gradient(45deg, #9b59b6, #8e44ad); box-shadow: 0 10px 25px rgba(155, 89, 182, 0.5); }
 
         @keyframes pulse-btn {
-            0% { transform: scale(1); box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4); }
-            100% { transform: scale(1.05); box-shadow: 0 15px 30px rgba(241, 196, 15, 0.6); }
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
         }
 
-        /* סגנונות RAINBOW גלובליים לחגיגת 50% */
         @keyframes rainbow-anim {
             0% { background-position: 0% center; }
             100% { background-position: 200% center; }
         }
 
-        .rainbow-active h1,
-        .rainbow-active .percentage,
-        .rainbow-active .milestone-msg,
-        .rainbow-active .mode-label,
-        .rainbow-active .did-you-know {
+        .rainbow-active .percentage, .rainbow-active h1, .rainbow-active .did-you-know {
             background: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
             background-size: 200% auto;
             color: transparent !important;
@@ -186,22 +118,6 @@
             animation: rainbow-anim 2s linear infinite !important;
         }
 
-        .rainbow-active button.action-btn {
-            background: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3) !important;
-            background-size: 200% auto;
-            color: white !important;
-            animation: rainbow-anim 2s linear infinite !important;
-            border: none;
-            text-shadow: 0 0 5px rgba(0,0,0,0.5);
-        }
-
-        .rainbow-active .progress-bar {
-            background: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3) !important;
-            background-size: 200% auto;
-            animation: rainbow-anim 2s linear infinite !important;
-        }
-
-        /* סגנונות לשכבות אוברליי */
         .meme-overlay {
             display: none;
             position: fixed;
@@ -211,60 +127,23 @@
             justify-content: center;
             align-items: center;
             flex-direction: column;
-        }
-        .meme-container {
-            position: relative;
-            max-width: 90%;
-            width: 600px;
             text-align: center;
-            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .meme-container img {
-            width: 100%;
-            border-radius: 10px;
-            box-shadow: 0 0 40px rgba(255, 255, 255, 0.2);
-            display: block;
-        }
-        
-        .meme-text {
-            position: absolute;
-            top: 5%; 
-            left: 50%;
-            transform: translateX(-50%);
-            font-family: 'Impact', sans-serif;
-            font-size: 4.5rem;
-            color: white; 
-            -webkit-text-stroke: 3px black; 
-            text-shadow: 4px 4px 0px #000; 
-            width: 95%;
-            line-height: 1.1;
-            text-transform: uppercase;
-        }
-        .meme-subtext {
-            position: absolute;
-            bottom: 5%; 
-            left: 50%;
-            transform: translateX(-50%);
-            font-family: 'Impact', sans-serif;
-            font-size: 2.5rem;
-            color: white;
-            -webkit-text-stroke: 2px black;
-            text-shadow: 3px 3px 0px #000;
-            width: 95%;
-            text-transform: uppercase;
         }
 
-        /* סגנון טקסט ייעודי לאירוויזיון */
-        .eurovision-text {
-            position: static;
-            transform: none;
-            font-size: 4rem;
-            color: #fff;
-            -webkit-text-stroke: 2px #0038b8;
-            text-shadow: 0 0 20px #0038b8, 3px 3px 0px #000;
+        .meme-text-final {
+            font-family: 'Impact', sans-serif;
+            font-size: 3.5rem;
+            color: white;
+            -webkit-text-stroke: 2px black;
+            text-shadow: 4px 4px 0 #000, 0 0 15px rgba(255,255,255,0.3);
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 30px;
+            border-radius: 20px;
+            line-height: 1.3;
+            max-width: 90%;
             margin-bottom: 20px;
         }
-        
+
         .close-meme-btn {
             margin-top: 30px;
             background-color: #e74c3c;
@@ -275,45 +154,35 @@
             padding: 15px 40px;
             border-radius: 8px;
             cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-            z-index: 10000;
-        }
-        .close-meme-btn:hover {
-            background-color: #c0392b;
-        }
-        @keyframes popIn {
-            0% { transform: scale(0.5); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
         }
     </style>
 </head>
-<body>
+<body class="normal-mode">
 
     <audio id="halfwayAudio" src="halfway.mp3" preload="auto" loop></audio>
-    <audio id="eurovisionAudio" src="eurovision.mp3" preload="auto" loop></audio>
+    <audio id="breakFreeAudio" src="break_free.mp3" preload="auto" loop></audio>
 
     <div id="memeOverlay" class="meme-overlay">
-        <div class="meme-container">
-            <img src="wall.jpg" alt="Brick Wall">
-            <div class="meme-text">נגענו בקיר!</div>
-            <div class="meme-subtext">WOOOAH, WE'RE HALFWAY THERE!</div>
+        <div style="position:relative; width:600px; max-width:90%;">
+            <img src="wall.jpg" style="width:100%; border-radius:10px;" alt="Brick Wall">
+            <div style="position:absolute; top:5%; left:50%; transform:translateX(-50%); font-family:Impact; font-size:4rem; color:white; -webkit-text-stroke:2px black; text-shadow:4px 4px 0 #000; width:95%; background-color: rgba(0,0,0,0.5); border-radius: 10px;">נגענו בקיר!</div>
         </div>
-        <button id="closeMemeBtn" class="close-meme-btn">יאללה להמשיך</button>
+        <button onclick="closeOverlay('memeOverlay', 'halfwayAudio')" class="close-meme-btn">יאללה להמשיך</button>
     </div>
 
-    <div id="eurovisionOverlay" class="meme-overlay">
-        <div class="meme-container">
-            <div class="meme-text eurovision-text">מקום שני<br>באירוויזיון! 🇮🇱</div>
-            <div class="meme-subtext eurovision-text" style="font-size: 3rem;">דוז פואה!</div>
+    <div id="finalOverlay" class="meme-overlay">
+        <div class="meme-text-final">
+            נודרררר סיימנווו<br>יששש היידה סוף סוף<br>ישששש נודרר יישששש<br>🔓🕊️
         </div>
-        <button id="closeEurovisionBtn" class="close-meme-btn" style="background-color: #0038b8;">חזרה לאתר</button>
+        <button onclick="closeOverlay('finalOverlay', 'breakFreeAudio')" class="close-meme-btn" style="background-color: #9b59b6;">חזרה למונה</button>
     </div>
 
     <div class="container" id="mainContainer">
-        <h1>התקדמות הקורס</h1>
-        <div class="milestone-msg" id="milestoneMsg"></div>
+        <h1 id="mainTitle">התקדמות הקורס</h1>
+        <div id="milestoneMsg" style="font-weight:bold; color:#d35400; margin-bottom:10px; display:none;"></div>
         
-        <button id="celebrate50Btn" class="celebrate-50-btn"></button>
+        <button id="celebrate50Btn" class="celebrate-50-btn">🚨 הגענו ל-50%! לחץ לפתיחה 🚨</button>
+        <button id="celebrateFinalBtn" class="celebrate-final-btn">🔓 לחץ כאן ליציאה לחופשי! 🔓</button>
 
         <div class="percentage" id="percentageDisplay">0.0000%</div>
         <div class="progress-bar-container" id="progressBarContainer">
@@ -321,20 +190,16 @@
         </div>
 
         <button id="toggleModeBtn" class="action-btn">הצג ברוטו (כולל סופ"שים)</button>
-        <div class="mode-label" id="modeLabel">מצב נוכחי: נטו (ללא 1-2.5 ו-8-9.5)</div>
+        <div class="mode-label" id="modeLabel" style="margin-top:15px; font-size:14px; color:#7f8c8d; margin-bottom:25px;">מצב נוכחי: נטו</div>
 
-        <button id="eurovisionBtn" class="eurovision-btn">🎤 לחץ לחגיגות אירוויזיון! 🇮🇱</button>
-
-        <div class="did-you-know" id="didYouKnow"></div>
+        <div class="did-you-know" id="didYouKnow" style="margin-top:20px; padding:15px; background-color:#e8f4f8; border-right:4px solid #3498db; border-radius:5px; font-size:15px; text-align:right; display:flex; align-items:center;"></div>
     </div>
 
     <script>
         const startDate = new Date('2026-04-23T09:00:00').getTime();
         const endDate = new Date('2026-05-21T09:00:00').getTime();
+        const ceremonyDate = new Date('2026-05-20T19:00:00').getTime(); // תאריך הטקס
         const totalCourseMs = endDate - startDate;
-
-        // שעת פקיעת התוקף של כפתור האירוויזיון - 17.5.2026 בשעה 23:59:59
-        const eurovisionCutoffDate = new Date('2026-05-17T23:59:59').getTime();
 
         const exclusions = [
             { start: new Date('2026-05-01T11:00:00').getTime(), end: new Date('2026-05-03T09:00:00').getTime() },
@@ -343,63 +208,43 @@
 
         let isNetMode = true;
 
-        function shootConfetti() {
-            const count = 300; 
-            const defaults = { origin: { y: 0.7 }, zIndex: 10000 }; 
-            function fire(particleRatio, opts) {
-              confetti({ ...defaults, ...opts, particleCount: Math.floor(count * particleRatio) });
-            }
-            fire(0.25, { spread: 26, startVelocity: 55 });
-            fire(0.2, { spread: 60 });
-            fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
-            fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
-            fire(0.1, { spread: 120, startVelocity: 45 });
+        function shootConfetti(colors = null) {
+            const count = 200;
+            const defaults = { origin: { y: 0.7 }, zIndex: 10000 };
+            if (colors) defaults.colors = colors;
+            confetti({ ...defaults, particleCount: count, spread: 70, startVelocity: 45 });
         }
 
-        function shootEurovisionConfetti() {
-            const duration = 5 * 1000;
-            const animationEnd = Date.now() + duration;
-            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 10000, colors: ['#ffffff', '#0038b8'] };
-
-            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
-
-            const interval = setInterval(function() {
-              const timeLeft = animationEnd - Date.now();
-              if (timeLeft <= 0) return clearInterval(interval);
-              
-              const particleCount = 50 * (timeLeft / duration);
-              confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } });
-              confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
-            }, 250);
+        function closeOverlay(id, audioId) {
+            document.getElementById(id).style.display = 'none';
+            const audio = document.getElementById(audioId);
+            audio.pause();
+            audio.currentTime = 0;
         }
 
+        // כפתור 50%
         document.getElementById('celebrate50Btn').addEventListener('click', () => {
-            const storageKey50 = isNetMode ? 'celebrated50Net' : 'celebrated50Gross';
+            localStorage.setItem('celebrated50', 'true');
+            document.getElementById('memeOverlay').style.display = 'flex';
+            document.getElementById('halfwayAudio').play().catch(e=>console.log('Audio error', e));
             shootConfetti();
-            document.getElementById('memeOverlay').style.display = 'flex'; 
-            document.getElementById('halfwayAudio').play().catch(e => console.log('Audio error', e));
-            localStorage.setItem(storageKey50, 'true'); 
             updateProgress();
         });
 
-        document.getElementById('closeMemeBtn').addEventListener('click', () => {
-            document.getElementById('memeOverlay').style.display = 'none';
-            const audio = document.getElementById('halfwayAudio');
-            audio.pause();
-            audio.currentTime = 0; 
-        });
-
-        document.getElementById('eurovisionBtn').addEventListener('click', () => {
-            shootEurovisionConfetti();
-            document.getElementById('eurovisionOverlay').style.display = 'flex';
-            document.getElementById('eurovisionAudio').play().catch(e => console.log('Eurovision Audio error', e));
-        });
-
-        document.getElementById('closeEurovisionBtn').addEventListener('click', () => {
-            document.getElementById('eurovisionOverlay').style.display = 'none';
-            const audio = document.getElementById('eurovisionAudio');
-            audio.pause();
-            audio.currentTime = 0;
+        // כפתור סיום (טקס)
+        document.getElementById('celebrateFinalBtn').addEventListener('click', () => {
+            localStorage.setItem('celebratedFinal', 'true');
+            document.getElementById('finalOverlay').style.display = 'flex';
+            document.getElementById('breakFreeAudio').play().catch(e=>console.log('Audio error', e));
+            
+            // מטח קונפטי אינסופי קטן
+            const end = Date.now() + (15 * 1000);
+            const interval = setInterval(function() {
+                if (Date.now() > end) return clearInterval(interval);
+                shootConfetti(['#9b59b6', '#ffffff', '#f1c40f', '#e74c3c']);
+            }, 1000);
+            
+            updateProgress();
         });
 
         function updateProgress() {
@@ -407,191 +252,129 @@
 
             let totalDuration = endDate - startDate;
             let elapsed = now - startDate;
-
             if (elapsed < 0) elapsed = 0;
             if (elapsed > totalDuration) elapsed = totalDuration;
 
-            let excludedTotal = 0;
+            // נטו
             let excludedElapsed = 0;
+            let excludedTotal = 0;
             exclusions.forEach(ex => {
                 excludedTotal += (ex.end - ex.start);
                 if (now > ex.start) {
-                    if (now > ex.end) excludedElapsed += (ex.end - ex.start);
-                    else excludedElapsed += (now - ex.start);
+                    excludedElapsed += (now > ex.end) ? (ex.end - ex.start) : (now - ex.start);
                 }
             });
 
-            const netTotal = totalDuration - excludedTotal;
-            const netElapsed = elapsed - excludedElapsed;
-            const netPercentage = Math.max(0, Math.min(100, (netElapsed / netTotal) * 100));
+            const netPercentage = Math.max(0, Math.min(100, ((elapsed - excludedElapsed) / (totalDuration - excludedTotal)) * 100));
             const grossPercentage = Math.max(0, Math.min(100, (elapsed / totalDuration) * 100));
-
             const displayPercentage = isNetMode ? netPercentage : grossPercentage;
 
-            document.getElementById('percentageDisplay').innerText = displayPercentage.toFixed(4) + '%';
+            // UI Elements
+            const pDisplay = document.getElementById('percentageDisplay');
             const pBar = document.getElementById('progressBar');
+            const container = document.getElementById('mainContainer');
+            const finalBtn = document.getElementById('celebrateFinalBtn');
+            const halfwayBtn = document.getElementById('celebrate50Btn');
+
+            pDisplay.innerText = displayPercentage.toFixed(4) + '%';
             pBar.style.width = displayPercentage + '%';
 
-            const milestoneMsg = document.getElementById('milestoneMsg');
-            const container = document.getElementById('mainContainer');
-            const percentageDisplay = document.getElementById('percentageDisplay');
-            const progressBarContainer = document.getElementById('progressBarContainer');
-            const toggleModeBtn = document.getElementById('toggleModeBtn');
-            const modeLabel = document.getElementById('modeLabel');
-            const didYouKnow = document.getElementById('didYouKnow');
-            const celebrateBtn = document.getElementById('celebrate50Btn');
-            const eurovisionBtn = document.getElementById('eurovisionBtn');
-            
-            // בדיקת התאריך עבור כפתור האירוויזיון
-            const isEurovisionActive = now <= eurovisionCutoffDate;
-
-            // טווח ה-50% עד 52%
-            if (displayPercentage >= 50 && displayPercentage < 52) {
-                const storageKey50 = isNetMode ? 'celebrated50Net' : 'celebrated50Gross';
-                const hasCelebrated = localStorage.getItem(storageKey50);
-
-                if (!hasCelebrated) {
-                    percentageDisplay.style.display = 'none';
-                    progressBarContainer.style.display = 'none';
-                    toggleModeBtn.style.display = 'none';
-                    modeLabel.style.display = 'none';
-                    didYouKnow.style.display = 'none';
-                    milestoneMsg.style.display = 'none';
-                    eurovisionBtn.style.display = 'none'; // מוסתר בנעילת 50%
-
-                    container.className = 'container celebration-glow-50';
-                    document.body.classList.remove('rainbow-active'); 
-
-                    celebrateBtn.style.display = 'block';
-                    celebrateBtn.innerText = '🚨 הגענו ל-50%! לחץ לפתיחת האתר 🚨';
+            // לוגיקת סיום (החל מ-19:00 של ה-20.5)
+            if (now >= ceremonyDate) {
+                const hasCelebratedFinal = localStorage.getItem('celebratedFinal');
+                if (!hasCelebratedFinal) {
+                    hideNormalUI();
+                    finalBtn.style.display = 'block';
+                    finalBtn.innerText = '🔓 לחץ כאן ליציאה לחופשי! 🔓';
+                    container.classList.add('celebration-glow-final');
                 } else {
-                    percentageDisplay.style.display = 'block';
-                    progressBarContainer.style.display = 'block';
-                    toggleModeBtn.style.display = 'inline-block';
-                    modeLabel.style.display = 'block';
-                    didYouKnow.style.display = 'flex';
-                    
-                    if (isEurovisionActive) {
-                        eurovisionBtn.style.display = 'block';
-                    } else {
-                        eurovisionBtn.style.display = 'none';
-                    }
-                    
-                    milestoneMsg.innerText = '🔥 חצי קורס מאחורינו! נגענו בקיר! 🔥';
-                    milestoneMsg.style.display = 'block';
-
-                    pBar.style.backgroundColor = '#3498db'; 
-                    container.className = 'container celebration-glow-50';
-                    document.body.classList.add('rainbow-active'); 
-
-                    celebrateBtn.style.display = 'block';
-                    celebrateBtn.innerText = '🎁 הפעל שוב את חגיגת הקיר! 🎁';
+                    showNormalUI();
+                    finalBtn.style.display = 'block';
+                    finalBtn.innerText = '🎁 הפעל שוב חגיגת חופש 🎁';
+                    document.body.classList.add('rainbow-active');
+                    container.classList.add('celebration-glow-final');
+                    pBar.style.backgroundColor = '#9b59b6';
                 }
-            }
-            // חגיגת ה-25%
-            else if (displayPercentage >= 25 && displayPercentage < 28) {
-                restoreUI(isEurovisionActive);
-                pBar.style.backgroundColor = '#f1c40f'; 
-                milestoneMsg.innerText = '🎉 25% מהדרך מאחורינו! 🎉';
-                milestoneMsg.style.display = 'block';
-                
-                container.className = 'container celebration-glow'; 
-                percentageDisplay.className = 'percentage celebration-percentage'; 
-                
-                document.body.classList.remove('rainbow-active'); 
-                celebrateBtn.style.display = 'none';
-
-                const storageKey25 = isNetMode ? 'celebrated25Net' : 'celebrated25Gross';
-                if (!localStorage.getItem(storageKey25)) {
-                    shootConfetti(); 
-                    localStorage.setItem(storageKey25, 'true'); 
-                }
+                halfwayBtn.style.display = 'none';
             } 
-            // מצב שגרה
+            // לוגיקת 50%
+            else if (displayPercentage >= 50 && displayPercentage < 55) {
+                const hasCelebrated50 = localStorage.getItem('celebrated50');
+                if (!hasCelebrated50) {
+                    hideNormalUI();
+                    halfwayBtn.style.display = 'block';
+                    halfwayBtn.innerText = '🚨 הגענו ל-50%! לחץ לפתיחה 🚨';
+                } else {
+                    showNormalUI();
+                    halfwayBtn.style.display = 'block';
+                    halfwayBtn.innerText = '🎁 הפעל שוב חגיגת קיר 🎁';
+                    document.body.classList.add('rainbow-active');
+                    container.classList.add('celebration-glow-50');
+                    pBar.style.backgroundColor = '#3498db';
+                }
+                finalBtn.style.display = 'none';
+            } 
+            // רגיל
             else {
-                restoreUI(isEurovisionActive);
-                pBar.style.backgroundColor = '#27ae60'; 
-                milestoneMsg.style.display = 'none';
+                showNormalUI();
                 container.className = 'container';
-                percentageDisplay.className = 'percentage';
-                document.body.classList.remove('rainbow-active'); 
-                celebrateBtn.style.display = 'none';
-                
-                if (displayPercentage < 50) localStorage.removeItem(isNetMode ? 'celebrated50Net' : 'celebrated50Gross'); 
-                if (displayPercentage < 25) localStorage.removeItem(isNetMode ? 'celebrated25Net' : 'celebrated25Gross'); 
+                document.body.classList.remove('rainbow-active');
+                pBar.style.backgroundColor = '#27ae60';
+                halfwayBtn.style.display = 'none';
+                finalBtn.style.display = 'none';
             }
         }
 
-        function restoreUI(isEurovisionActive) {
+        function hideNormalUI() {
+            document.getElementById('percentageDisplay').style.display = 'none';
+            document.getElementById('progressBarContainer').style.display = 'none';
+            document.getElementById('toggleModeBtn').style.display = 'none';
+            document.getElementById('modeLabel').style.display = 'none';
+            document.getElementById('didYouKnow').style.display = 'none';
+        }
+
+        function showNormalUI() {
             document.getElementById('percentageDisplay').style.display = 'block';
             document.getElementById('progressBarContainer').style.display = 'block';
             document.getElementById('toggleModeBtn').style.display = 'inline-block';
             document.getElementById('modeLabel').style.display = 'block';
             document.getElementById('didYouKnow').style.display = 'flex';
-            
-            if (isEurovisionActive) {
-                document.getElementById('eurovisionBtn').style.display = 'block';
-            } else {
-                document.getElementById('eurovisionBtn').style.display = 'none';
-            }
         }
 
         document.getElementById('toggleModeBtn').addEventListener('click', () => {
             isNetMode = !isNetMode;
-            const btn = document.getElementById('toggleModeBtn');
-            const label = document.getElementById('modeLabel');
-            if (isNetMode) {
-                btn.innerText = 'הצג ברוטו (כולל סופ"שים)';
-                label.innerText = 'מצב נוכחי: נטו (ללא 1-2.5 ו-8-9.5)';
-            } else {
-                btn.innerText = 'הצג נטו (ללא סופ"שים)';
-                label.innerText = 'מצב נוכחי: ברוטו (כולל הכל)';
-            }
+            document.getElementById('toggleModeBtn').innerText = isNetMode ? 'הצג ברוטו (כולל סופ"שים)' : 'הצג נטו';
             updateProgress();
         });
 
         function calcPercentFromTotal(minutes) {
-            const ms = minutes * 60 * 1000;
-            return ((ms / totalCourseMs) * 100).toFixed(4) + '%';
+            return ((minutes * 60 * 1000 / totalCourseMs) * 100).toFixed(4) + '%';
         }
 
         function getRandomFact() {
             const facts = [
-                `הידעת? הליכה לאולם הנגב (3 דקות) לוקחת כ-${calcPercentFromTotal(3)} מהקורס.`,
-                `הידעת? הנחת תפילין בבוקר (5 דקות) לוקחת כ-${calcPercentFromTotal(5)} מהקורס.`,
-                `הידעת? הורדת התנסות לוקחת לך ${calcPercentFromTotal(20)} מזמן הקורס.`,
-                `הידעת? עמידה בתור לחדר האוכל (15 דקות) לוקחת ${calcPercentFromTotal(15)} מהקורס.`,
-                `הידעת? גילוח וצחצוח בוקר (4 דקות) לוקחים כ-${calcPercentFromTotal(4)} מהקורס.`,
-                `הידעת? שינה של 7 שעות הלילה לוקחת ${calcPercentFromTotal(7 * 60)} מכל הקורס.`,
-                `הידעת? ישיבה של 15 דקות בשירותים שורפת ${calcPercentFromTotal(15)} מהקורס.`,
-                `הידעת? ריצת 3 ק"מ ב-15:30 דקות לוקחת ${calcPercentFromTotal(15.5)} מזמן הקורס.`,
-                `הידעת? כתיבת 3 יעדים ביומן (10 דקות) שווה ערך ל-${calcPercentFromTotal(10)} מהקורס.`,
-                `הידעת? גלילה ממוצעת ב-Reels (20 דקות) שורפת ${calcPercentFromTotal(20)} מהקורס.`,
-                `הידעת? בזמן שקראת את הידיעה הזאת (10 שניות), עבר בדיוק ${calcPercentFromTotal(10 / 60)} מהקורס.`,
-                `הידעת? יום ג' רפואי (24 שעות בבית) שווה ל-${calcPercentFromTotal(24 * 60)} מהקורס.`,
+                `הידעת? הליכה לאולם הנגב לוקחת כ-${calcPercentFromTotal(3)} מהקורס.`,
+                `הידעת? הנחת תפילין לוקחת כ-${calcPercentFromTotal(5)} מהזמן הכולל.`,
+                `הידעת? יום ג' רפואי אחד שווה ל-${calcPercentFromTotal(1440)} מהקורס.`,
+                `הידעת? לקח לי 1.5% מהקורס להכין את האתר הזה!`,
                 `הידעת? גזירת זמנים של 10 דקות לוקחת ${calcPercentFromTotal(10)} מהקורס.`,
-                `הידעת? הליכה מהתעלה לש"ג (10 דקות) לוקחת ${calcPercentFromTotal(10)} מהקורס.`,
-                `הידעת? תרגיל מרחב מוגן (15 דקות) לוקח ${calcPercentFromTotal(15)} מהקורס.`,
-                `הידעת? זמן תור בחלבייה בבוקר (10 דקות) שורף ${calcPercentFromTotal(10)} מהקורס.`
+                `הידעת? שינה של 7 שעות לוקחת ${calcPercentFromTotal(420)} מכל הקורס.`,
+                `הידעת? גלילה ב-Reels של 20 דקות שורפת ${calcPercentFromTotal(20)} מהקורס.`
             ];
             return facts[Math.floor(Math.random() * facts.length)];
         }
 
-        const didYouKnowEl = document.getElementById('didYouKnow');
-        function changeFact() {
-            if(didYouKnowEl.style.display !== 'none') {
-                didYouKnowEl.style.opacity = 0; 
-                setTimeout(() => {
-                    didYouKnowEl.innerText = getRandomFact();
-                    didYouKnowEl.style.opacity = 1; 
-                }, 500);
-            }
-        }
-
         setInterval(updateProgress, 50);
+        setInterval(() => {
+            const dyk = document.getElementById('didYouKnow');
+            if(dyk.style.display !== 'none') {
+                dyk.style.opacity = 0;
+                setTimeout(() => { dyk.innerText = getRandomFact(); dyk.style.opacity = 1; }, 500);
+            }
+        }, 12000);
+        
         updateProgress();
-        changeFact(); 
-        setInterval(changeFact, 12000); 
+        document.getElementById('didYouKnow').innerText = getRandomFact();
     </script>
 </body>
 </html>
